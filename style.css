@@ -1,0 +1,154 @@
+/* Import Comic Font */
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+body {
+    background-color: #f0e8d8; /* Old paper effect */
+    margin: 0;
+    font-family: sans-serif; /* Fallback font */
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    min-height: 100vh; /* Ensure footer is pushed down */
+    box-sizing: border-box;
+}
+
+.comic-book-page {
+    background-color: #ffffff; /* White page */
+    border: 1px solid #333;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 900px; /* Adjust max width as needed */
+    width: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column; /* Ensure header/main/footer stack vertically */
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 4px dotted #555; /* Dotted border */
+    padding-bottom: 15px;
+}
+
+.page-header h1 {
+    font-family: 'Bangers', cursive; /* Comic font */
+    font-size: 4.5rem; /* Large title */
+    color: #d90429; /* Comic book red */
+    text-shadow: 3px 3px 0px #ffba08, /* Yellow offset */
+                 5px 5px 0px #000000; /* Black outline */
+    margin: 0;
+    letter-spacing: 3px;
+    line-height: 1.1;
+}
+
+#comic-strips-container {
+    margin-bottom: 30px;
+    flex-grow: 1; /* Allow main content to take available space */
+}
+
+.loading-placeholder {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    text-align: center;
+    color: #666;
+    padding: 40px 0;
+}
+
+.comic-strip-row {
+    display: flex;
+    justify-content: space-between; /* Evenly space panels */
+    align-items: stretch; /* Make panels the same height */
+    margin-bottom: 25px; /* Space between comic strip rows */
+    padding: 8px;
+    background-color: #fdfdfd;
+    /* Optional: Add a faint border around the whole strip */
+    border: 1px solid #ddd;
+}
+
+.comic-panel {
+    flex: 1; /* Each panel takes equal width */
+    /* Use padding for spacing *around* the image within the panel */
+    padding: 6px;
+    box-sizing: border-box;
+    text-align: center; /* Center image if it's narrower than the panel */
+}
+
+.comic-panel img {
+    max-width: 100%; /* Image scales down to fit panel */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Removes extra space below image */
+    margin: 0 auto; /* Center image if padding is applied */
+    /* Assuming images have borders already. If not: */
+    /* border: 2px solid #000; */
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.15); /* Subtle panel shadow */
+    background-color: #eee; /* Show a placeholder color while loading */
+}
+
+/* Style for when an image fails to load (applied by JS) */
+.comic-panel.img-error {
+    background-color: #fff0f0; /* Light red background */
+    border: 1px dashed #d90429; /* Dashed red border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    color: #d90429; /* Red text */
+    text-align: center;
+    min-height: 100px; /* Give it some visible height */
+    word-break: break-all; /* Help prevent long file paths overflowing */
+    padding: 10px; /* Add padding inside the error box */
+}
+.comic-panel.img-error span {
+    /* Specific styling for the error text span if needed */
+     font-family: monospace;
+}
+
+
+.page-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+    border-top: 1px solid #ccc;
+    padding-top: 15px;
+    margin-top: 20px; /* Space above footer */
+    font-family: 'Bangers', cursive;
+    letter-spacing: 1px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 3.5rem;
+        text-shadow: 2px 2px 0px #ffba08, 4px 4px 0px #000000;
+    }
+    .comic-strip-row {
+        flex-wrap: wrap; /* Allow panels to wrap onto the next line */
+    }
+    .comic-panel {
+        /* On medium screens, make panels take up half width */
+        flex-basis: calc(50% - 12px); /* 50% minus padding/margins */
+        margin-bottom: 10px; /* Add space when wrapped */
+    }
+}
+
+@media (max-width: 480px) {
+    .comic-book-page {
+        padding: 15px;
+    }
+    .page-header h1 {
+        font-size: 2.8rem;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 0px #ffba08, 3px 3px 0px #000000;
+    }
+    .comic-panel {
+        /* On small screens, make panels take up full width */
+        flex-basis: 100%;
+    }
+     .comic-strip-row {
+        padding: 4px; /* Reduce row padding */
+    }
+     .comic-panel {
+        padding: 4px; /* Reduce panel padding */
+    }
+}
