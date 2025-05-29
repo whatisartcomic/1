@@ -1,6 +1,7 @@
 
 
 $(document).ready(function() {
+  document.documentElement.classList.add('ready');
   if (typeof $.fn.turn !== 'function') {
     console.error('Turn.js not loaded:', $.fn.turn);
     return;
