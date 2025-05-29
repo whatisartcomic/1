@@ -104,23 +104,7 @@ $(document).ready(function() {
     // 2. Initial pass on existing content
     document.querySelectorAll('body *').forEach(el => wrapText(el));
 
-    // 3. Observe all future changes
-    const observer = new MutationObserver(mutations => {
-      for (const mut of mutations) {
-        // New nodes added
-        mut.addedNodes.forEach(n => wrapText(n));
-        // Text within existing node changed
-        if (mut.type === 'characterData') {
-          wrapText(mut.target);
-        }
-      }
-    });
-    observer.observe(document.body, {
-      childList: true,
-      characterData: true,
-      subtree: true
-    });
-
+  
 
 
 
