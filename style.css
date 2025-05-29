@@ -35,10 +35,11 @@ body {
 
 /* Title page */
 .page.title {
+  background: white;       /* ensure opaque white */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
+  padding: 20px;           /* optional, for breathing room */
 }
 .page.title h1 {
   font-size: 4em;
