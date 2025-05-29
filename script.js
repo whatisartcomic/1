@@ -37,9 +37,9 @@ $(document).ready(function() {
         width: w,
         height: h,
         display: 'single',
-        autoCenter: true,
+        autoCenter: false,
         gradients: true,
-        acceleration: true,
+        acceleration: false,
         duration: 600
       });
 
