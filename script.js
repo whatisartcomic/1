@@ -32,9 +32,10 @@ $(document).ready(function() {
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
         $fb
-          .css({ width: w + 'px' })
+          .css({ width: w + 'px', height: 600 + 'px' })
           .turn({
             width: w,
+            height: h,
             display: 'single',
             autoCenter: false,
             gradients: true,
@@ -47,8 +48,16 @@ $(document).ready(function() {
           $('#haikuDisplay').text(page === 1 ? '' : data[page - 2]);
         });
 
-        // Advance to a random comic on "?" click
+        // Forward and backward buttons
         $('#nextBtn').off('click').on('click', function() {
+          $fb.turn('next');
+        });
+        $('#prevBtn').off('click').on('click', function() {
+          $fb.turn('previous');
+        });
+
+        // Random comic button
+        $('#randomBtn').off('click').on('click', function() {
           const totalPages = $fb.turn('pages');
           // Pages 2 through totalPages are comics
           const randomPage = Math.floor(Math.random() * (totalPages - 1)) + 2;
