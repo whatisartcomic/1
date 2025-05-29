@@ -29,8 +29,10 @@ $(document).ready(function() {
       });
 
       // Initialize Turn.js
-      const w = $fb.width();
-      const h = $fb.height();
+      //const w = $fb.width();
+      //const h = $fb.height();
+      const w = 800;
+      const h = 600;
       $fb.turn({
         width: w,
         height: h,
