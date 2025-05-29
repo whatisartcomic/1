@@ -1,55 +1,63 @@
+/* Base & centering */
 body {
-  background: #fdfdfd;
-  font-family: 'Helvetica Neue', sans-serif;
   margin: 0;
   padding: 0;
+  font-family: 'Helvetica Neue', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  flex-direction: column;
+  background: #fdfdfd;
 }
 
 #gallery {
   width: 100%;
   height: 100%;
-  text-align: center;
-  box-sizing: border-box;
-  padding: 20px;
-}
-
-/* Flipbook fills full width/height */
-#flipbook {
   position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 90vh;
-  margin: auto;
+  box-sizing: border-box;
 }
 
-/* Hide all pages by default */
+/* Flipbook container */
+#flipbook {
+  width: 100%;
+  height: calc(100% - 100px); /* leave room for button */
+  margin: auto;
+  overflow: hidden;
+}
+
+/* Each page wrapper */
 #flipbook .page {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  visibility: hidden;
+  box-sizing: border-box;
+  display: block;
+}
+
+/* Title page */
+.page.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page.title h1 {
+  font-size: 4em;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+/* Content layout */
+.page-content {
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  height: 100%;
   padding: 20px;
   box-sizing: border-box;
 }
 
-/* Show only the current Turn.js page */
-.turn-page-wrapper .page {
-  visibility: visible;
-}
-
-/* Comic and haiku side-by-side */
+/* Comic frame */
 .comic-frame {
-  width: 72%;
+  flex: 0 0 72%;
   background: white;
   border: 8px solid #111;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
@@ -62,43 +70,32 @@ body {
   display: block;
 }
 
+/* Haiku text */
 .haiku {
-  width: 24%;
+  flex: 0 0 24%;
   margin-left: 4%;
+  font-style: italic;
   white-space: pre-wrap;
   font-size: 1em;
-  font-style: italic;
-  box-sizing: border-box;
+  line-height: 1.4;
 }
 
-/* Title page styling */
-.page.title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.page.title h1 {
-  font-size: 4em;
-  margin: 0;
-}
-
-/* Big question-mark button */
+/* “?” button */
 #nextBtn {
-  background: #f5f5f5;
-  border: 2px solid #aaa;
-  font-family: 'Georgia', serif;
-  font-size: 2.5em;
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
-  text-align: center;
-  border-radius: 50%;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
-  position: fixed;
+  position: absolute;
   bottom: 20px;
   right: 20px;
-  margin: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #aaa;
+  background: #f5f5f5;
+  font-family: Georgia, serif;
+  font-size: 2.5em;
+  line-height: 80px;
+  text-align: center;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
 }
 #nextBtn:hover {
   background: #eee;
