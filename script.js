@@ -1,42 +1,41 @@
-let current = Math.floor(Math.random() * 54) + 1;
-const total = 54;
+$(function() {
+  fetch('haikus.json')
+    .then(res => res.json())
+    .then(data => {
+      const $fb = $('#flipbook');
 
-fetch('haikus.json')
-  .then(response => response.json())
-  .then(data => {
-    const comic = document.getElementById('comic');
-    const haiku = document.getElementById('haiku');
-    const nextBtn = document.getElementById('nextBtn');
+      // Title page
+      $fb.append(`
+        <div class="page title">
+          <h1>WHAT IS ART?</h1>
+        </div>
+      `);
 
-    const update = () => {
-      comic.src = `images/${current}.png`;
-      haiku.textContent = data[current - 1];
-    };
+      // One page per comic+haiku
+      data.forEach((haiku, i) => {
+        const num = i + 1;
+        $fb.append(`
+          <div class="page">
+            <div class="comic-frame">
+              <img src="images/${num}.png" alt="Comic ${num}">
+            </div>
+            <pre class="haiku">${haiku}</pre>
+          </div>
+        `);
+      });
 
-    const next = () => {
-      let next = Math.floor(Math.random() * total) + 1;
-      while (next === current) {
-        next = Math.floor(Math.random() * total) + 1;
-      }
-      current = next;
-      update();
-    };
+      // Initialize Turn.js
+      $fb.turn({
+        width: 800,
+        height: 1000,
+        autoCenter: true,
+        gradients: true,
+        acceleration: true
+      });
 
-    nextBtn.addEventListener('click', next);
-
-    // Swipe detection
-    let touchStartX = null;
-
-    document.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
+      // Next page on “?” click
+      $('#nextBtn').on('click', () => {
+        $fb.turn('next');
+      });
     });
-
-    document.addEventListener('touchend', e => {
-      if (!touchStartX) return;
-      let deltaX = e.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(deltaX) > 50) next();
-      touchStartX = null;
-    });
-
-    update();
-  });
+});
