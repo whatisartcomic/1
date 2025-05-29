@@ -28,14 +28,13 @@ $(document).ready(function() {
         `);
       });
 
-      // Initialize Turn.js dynamically sizing
+      // Initialize Turn.js with dynamic sizing
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
         $fb
-          .css({ width: w + 'px'})
+          .css({ width: w + 'px' })
           .turn({
             width: w,
-
             display: 'single',
             autoCenter: false,
             gradients: true,
@@ -43,16 +42,21 @@ $(document).ready(function() {
             duration: 900
           });
 
-        // Bind turn events
+        // Update haiku text on each turn
         $fb.off('turned').on('turned', function(e, page) {
           $('#haikuDisplay').text(page === 1 ? '' : data[page - 2]);
         });
-        // Advance on "?" click
+
+        // Advance to a random comic on "?" click
         $('#nextBtn').off('click').on('click', function() {
-          $fb.turn('next');
+          const totalPages = $fb.turn('pages');
+          // Pages 2 through totalPages are comics
+          const randomPage = Math.floor(Math.random() * (totalPages - 1)) + 2;
+          $fb.turn('page', randomPage);
         });
       };
 
+      // Wait for first image to load (or use cached dimensions)
       if ($firstImg[0].complete) {
         initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
       } else {
