@@ -21,12 +21,26 @@ body {
 }
 
 /* Flipbook styling */
+/* 1) Make the flipbook a true clipping container with perspective */
 #flipbook {
-  flex: 0 0 72%;
- /* height: calc(100% - 88px);*/
-  margin: 10px;
-  overflow: hidden;
+  position: relative;        /* establish a new containing block */
+  overflow: hidden;          /* clip any child transforms */
+  perspective: 2000px;       /* enable 3D transforms inside */
+  perspective-origin: 50% 50%;
+  width: 800px;              /* match your page width (or use JS to set) */
+  height: 600px;             /* match your page height */
 }
+
+/* 2) Force Turn.js’s viewport and page wrappers to live inside #flipbook */
+#flipbook .turn-viewport,
+#flipbook .turn-page-wrapper {
+  position: absolute !important;  /* sit at top-left of #flipbook */
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;    /* clip their own children, too */
+}
+
 #flipbook .page {
   width: 100%;
   height: 100%;
