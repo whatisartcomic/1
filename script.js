@@ -63,61 +63,31 @@ $(document).ready(function() {
             $('#haikuDisplay').text(data[dataIdx]);
           }
         });
-    // 1. Function to wrap **just the text nodes** under a given element
-    function wrapText(node) {
-      // Skip if already processed
-      if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
-      // Only process text nodes with real content
-      if (node.nodeType === Node.TEXT_NODE && /\S/.test(node.textContent)) {
-        const parent = node.parentNode;
-        const text = node.textContent;
-        const frag = document.createDocumentFragment();
-
-        for (const char of text) {
-          if (char === ' ') {
-            frag.appendChild(document.createTextNode(' '));
-            continue;
+       document.addEventListener("DOMContentLoaded", () => {
+      // Select all text-bearing elements you want to animate
+      const selectors = "h1, h2, h3, p, li, blockquote, span";
+      document.querySelectorAll(selectors).forEach(el => {
+        const text = el.textContent;
+        el.textContent = ""; 
+        // Wrap every character
+        Array.from(text).forEach(char => {
+          if (char === " ") {
+            el.appendChild(document.createTextNode(" "));
+            return;
           }
-          const span = document.createElement('span');
+          const span = document.createElement("span");
           span.textContent = char;
-          span.className = 'fade-in-letter';
-          // random delay 0–2s
-          span.style.setProperty('--delay', (Math.random()*2).toFixed(2) + 's');
-          // random rotation –20° to +20°
-          span.style.setProperty('--rotate-start', (Math.random()*40 - 20).toFixed(0) + 'deg');
-          frag.appendChild(span);
-        }
-        parent.replaceChild(frag, node);
-        parent.dataset.fadeWrapped = 'true';
-      }
-      // If element node, recurse into children
-      else if (node.nodeType === Node.ELEMENT_NODE) {
-        for (const child of Array.from(node.childNodes)) {
-          wrapText(child);
-        }
-      }
-    }
-
-    // 2. Initial pass on existing content
-    document.querySelectorAll('body *').forEach(el => wrapText(el));
-
-    // 3. Observe all future changes
-    const observer = new MutationObserver(mutations => {
-      for (const mut of mutations) {
-        // New nodes added
-        mut.addedNodes.forEach(n => wrapText(n));
-        // Text within existing node changed
-        if (mut.type === 'characterData') {
-          wrapText(mut.target);
-        }
-      }
-    });
-    observer.observe(document.body, {
-      childList: true,
-      characterData: true,
-      subtree: true
-    });
-        
+          span.classList.add("fade-in-letter");
+          // random delay between 0 and 2s
+          const delay = (Math.random() * 2).toFixed(2) + "s";
+          // random start rotation between -20° and +20°
+          const rotate = (Math.random() * 40 - 20).toFixed(0) + "deg";
+          span.style.setProperty("--delay", delay);
+          span.style.setProperty("--rotate-start", rotate);
+          el.appendChild(span);
+        });
+      });
+    });     
         // Random comic on "?" button click
         $('#nextBtn').off('click').on('click', function() {
           const totalPages = $fb.turn('pages');
