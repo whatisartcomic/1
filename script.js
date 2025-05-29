@@ -58,17 +58,21 @@ $(document).ready(function() {
         // Update haiku text on each turn, using the randomized order
 $fb.off('turned').on('turned', function(e, page) {
   const p = document.getElementById('haikuDisplay');
+
   if (page === 1) {
     p.textContent = '';
   } else {
     const dataIdx = pagesOrder[page - 2];
     p.textContent = data[dataIdx];
-    // Allow re‐wrapping by clearing the flag:
+
+    // clear the “wrapped” flag so wrapText will run again
     delete p.dataset.fadeWrapped;
-    // Now wrap the newly inserted text
+
+    // now turn each word into a span and kick off the animation
     wrapText(p);
   }
 });
+
 
 
 
