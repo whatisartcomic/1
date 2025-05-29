@@ -47,7 +47,7 @@ $(document).ready(function() {
           gradients: true,
           acceleration: true,
           elevation:50,
-          duration: 900,
+          duration: 1800,
           cornerSize: 100
         });
 
