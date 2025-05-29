@@ -4,20 +4,21 @@
   <meta charset="UTF-8">
   <title>WHAT IS ART?</title>
   <link rel="stylesheet" href="style.css">
-
-
 </head>
 <body>
   <div id="gallery">
-    <!-- THIS replaces any old <img> or <pre> elements -->
     <div id="flipbook"></div>
-
-    <!-- Big question-mark button -->
+    <div id="haikuDisplay" class="haiku"></div>
     <button id="nextBtn">?</button>
   </div>
-  <!-- jQuery + Turn.js -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- 1. jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+          integrity="sha256-/xUj+3OJ+Y2CF7t/augU/vp4Yf3cYzuP/fh2E634BxE="
+          crossorigin="anonymous"></script>
+  <!-- 2. Turn.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+  <!-- 3. Logic -->
   <script src="script.js"></script>
 </body>
 </html>
