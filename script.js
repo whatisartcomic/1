@@ -40,7 +40,7 @@ $(document).ready(function() {
             autoCenter: false,
             gradients: true,
             acceleration: false,
-            duration: 600
+            duration: 900
           });
 
         // Bind turn events
