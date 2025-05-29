@@ -29,7 +29,7 @@ body {
   perspective: 2000px;       /* enable 3D transforms inside */
   perspective-origin: 50% 50%;
  /* width: 800px; */             /* match your page width (or use JS to set) */
- /* height: 600px;*/             /* match your page height */
+  height: 600px;            /* match your page height */
 }
 
 /* 2) Force Turn.js’s viewport and page wrappers to live inside #flipbook */
