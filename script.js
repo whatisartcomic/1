@@ -9,14 +9,14 @@ $(document).ready(function() {
     .then(data => {
       const $fb = $('#flipbook').empty();
 
-      // Title page
+      // 1. Title page
       $fb.append(`
         <div class="page title">
           <h1>WHAT IS ART?</h1>
         </div>
       `);
 
-      // One page per comic+haiku
+      // 2. One page per comic+haiku
       data.forEach((haiku, i) => {
         const num = i + 1;
         $fb.append(`
@@ -29,10 +29,13 @@ $(document).ready(function() {
         `);
       });
 
-      // Initialize Turn.js in single-page mode
+      // 3. Initialize Turn.js for a single full-width page
+      const containerWidth = $('#flipbook').width();
+      const containerHeight = $('#flipbook').height();
+
       $fb.turn({
-        width: Math.min(window.innerWidth * 0.8, 800),
-        height: Math.min(window.innerHeight * 0.8, 1000),
+        width: containerWidth,
+        height: containerHeight,
         autoCenter: true,
         display: 'single',
         gradients: true,
@@ -40,7 +43,7 @@ $(document).ready(function() {
         duration: 600
       });
 
-      // Advance on “?” click
+      // 4. Advance on “?” click
       $('#nextBtn').off('click').on('click', () => {
         $fb.turn('next');
       });
