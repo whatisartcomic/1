@@ -7,20 +7,18 @@ $(document).ready(function() {
   fetch('haikus.json')
     .then(res => res.json())
     .then(data => {
-      const $fb = $('#flipbook');
+      const $fb = $('#flipbook').empty();
 
-      // 1. Title page spread: blank left + title on right
-      $fb.append('<div class="page blank"></div>');
+      // Title page
       $fb.append(`
         <div class="page title">
           <h1>WHAT IS ART?</h1>
         </div>
       `);
 
-      // 2. For each comic: blank left + content right
+      // One page per comic+haiku
       data.forEach((haiku, i) => {
         const num = i + 1;
-        $fb.append('<div class="page blank"></div>');
         $fb.append(`
           <div class="page">
             <div class="comic-frame">
@@ -31,19 +29,21 @@ $(document).ready(function() {
         `);
       });
 
-      // 3. Initialize Turn.js in double-page mode
+      // Initialize Turn.js in single-page mode
       $fb.turn({
-        width: window.innerWidth * 0.9,
-        height: window.innerHeight * 0.9,
+        width: Math.min(window.innerWidth * 0.8, 800),
+        height: Math.min(window.innerHeight * 0.8, 1000),
         autoCenter: true,
-        display: 'double',
+        display: 'single',
         gradients: true,
         acceleration: true,
         duration: 600
       });
 
-      // 4. Advance on “?” click
-      $('#nextBtn').on('click', () => $fb.turn('next'));
+      // Advance on “?” click
+      $('#nextBtn').off('click').on('click', () => {
+        $fb.turn('next');
+      });
     })
     .catch(err => console.error('Failed to fetch haikus.json:', err));
 });
