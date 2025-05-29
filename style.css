@@ -13,21 +13,22 @@ body {
 #gallery {
   text-align: center;
   width: 100%;
-  max-width: 90%;
-  margin: auto;
+  height: 100%;
   padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Flipbook container responsive sizing */
+/* Flipbook container fills 100% of available width */
 #flipbook {
-  margin: 20px auto;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  /* adjust height as needed */
+  height: 90vh;
+  margin: auto;
 }
 
-/* Single page fills container */
+/* Single page fills the entire container */
 #flipbook .page {
-  width: 100%;
+  width: 100% !important;
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -43,18 +44,6 @@ body {
   font-size: 4em;
   letter-spacing: 0.1em;
   margin: 0;
-}
-
-/* Portrait vs. landscape: adjust height */
-@media (orientation: portrait) {
-  #flipbook {
-    height: 80vh;
-  }
-}
-@media (orientation: landscape) {
-  #flipbook {
-    height: 90vh;
-  }
 }
 
 /* Comic frame styling */
