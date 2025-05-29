@@ -22,7 +22,7 @@ $(document).ready(function() {
         $fb.append(`
           <div class="page">
             <div class="comic-frame">
-              <img src="images/${num}.png" alt="Comic ${num}">
+              <img src="images/webp/${num}.webp" alt="Comic ${num}">
             </div>
           </div>
         `);
