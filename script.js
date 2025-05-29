@@ -32,10 +32,10 @@ $(document).ready(function() {
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
         $fb
-          .css({ width: w + 'px', height: h + 200 +  'px' })
+          .css({ width: w + 'px'})
           .turn({
             width: w,
-            height: h,
+
             display: 'single',
             autoCenter: false,
             gradients: true,
