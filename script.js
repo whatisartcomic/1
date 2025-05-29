@@ -27,7 +27,7 @@ $(function() {
       // Initialize Turn.js
       $fb.turn({
         width: 800,
-        height: 1000,
+        height: 600,
         autoCenter: true,
         gradients: true,
         acceleration: true
