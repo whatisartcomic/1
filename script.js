@@ -1,6 +1,6 @@
 $(document).ready(function() {
   if (typeof $.fn.turn !== 'function') {
-    console.error('Turn.js did not load. $.fn.turn is', $.fn.turn);
+    console.error('Turn.js not loaded:', $.fn.turn);
     return;
   }
 
@@ -9,31 +9,28 @@ $(document).ready(function() {
     .then(data => {
       const $fb = $('#flipbook').empty();
 
-      // 1. Title page
+      // Title page
       $fb.append(`
         <div class="page title">
           <h1>WHAT IS ART?</h1>
         </div>
       `);
 
-      // 2. Comic+haiku pages
-      data.forEach((haiku, i) => {
+      // Comic pages (no internal haiku)
+      data.forEach((_, i) => {
         const num = i + 1;
         $fb.append(`
           <div class="page">
-            <div class="page-content">
-              <div class="comic-frame">
-                <img src="images/${num}.png" alt="Comic ${num}">
-              </div>
-              <pre class="haiku">${haiku}</pre>
+            <div class="comic-frame">
+              <img src="images/${num}.png" alt="Comic ${num}">
             </div>
           </div>
         `);
       });
 
-      // 3. Initialize Turn.js (single-page view)
-      const w = $('#flipbook').width();
-      const h = $('#flipbook').height();
+      // Initialize Turn.js
+      const w = $fb.width();
+      const h = $fb.height();
       $fb.turn({
         width: w,
         height: h,
@@ -44,10 +41,19 @@ $(document).ready(function() {
         duration: 600
       });
 
-      // 4. Advance on “?” click
+      // On each turn, update/clear haiku
+      $fb.bind('turned', function(e, page) {
+        if (page === 1) {
+          $('#haikuDisplay').text('');
+        } else {
+          $('#haikuDisplay').text(data[page - 2]);
+        }
+      });
+
+      // Advance on “?” click
       $('#nextBtn').off('click').on('click', () => {
         $fb.turn('next');
       });
     })
-    .catch(err => console.error('Error loading haikus.json:', err));
+    .catch(err => console.error('Failed to load haikus:', err));
 });
