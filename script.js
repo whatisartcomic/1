@@ -56,14 +56,20 @@ $(document).ready(function() {
         });
 
         // Update haiku text on each turn, using the randomized order
-        $fb.off('turned').on('turned', function(e, page) {
-          if (page === 1) {
-            $('#haikuDisplay').text('');
-          } else {
-            const dataIdx = pagesOrder[page - 2];
-            $('#haikuDisplay').text(data[dataIdx]);
-          }
-        });
+$fb.off('turned').on('turned', function(e, page) {
+  const p = document.getElementById('haikuDisplay');
+  if (page === 1) {
+    p.textContent = '';
+  } else {
+    const dataIdx = pagesOrder[page - 2];
+    p.textContent = data[dataIdx];
+    // Allow re‐wrapping by clearing the flag:
+    delete p.dataset.fadeWrapped;
+    // Now wrap the newly inserted text
+    wrapText(p);
+  }
+});
+
 
 
 
