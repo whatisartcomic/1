@@ -2,7 +2,7 @@
 
 
 $(document).ready(function() {
-  document.documentElement.classList.add('ready');
+ 
   if (typeof $.fn.turn !== 'function') {
     console.error('Turn.js not loaded:', $.fn.turn);
     return;
@@ -70,8 +70,6 @@ $(document).ready(function() {
  // 1. Function to wrap **just the text nodes** under a given element
     function wrapText(node) {
       // Skip if already processed
-
-      if (node.nodeType === Node.ELEMENT_NODE && node.id === 'haikuDisplay') return;
       if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
       // Only process text nodes with real content
       if (node.nodeType === Node.TEXT_NODE && /\S/.test(node.textContent)) {
