@@ -75,38 +75,56 @@ $fb.off('turned').on('turned', function(e, page) {
 
  // 1. Function to wrap **just the text nodes** under a given element
     function wrapText(node) {
-      // Skip if already processed
-      if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
-      // Only process text nodes with real content
-      if (node.nodeType === Node.TEXT_NODE && /\S/.test(node.textContent)) {
-        const parent = node.parentNode;
-        const text = node.textContent;
-        const frag = document.createDocumentFragment();
+  // don’t re‐wrap the same parent
+  if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
 
-        for (const char of text) {
-          if (char === ' ') {
-            frag.appendChild(document.createTextNode(' '));
-            continue;
-          }
+  // only wrap real text
+  if (node.nodeType === Node.TEXT_NODE && /\S/.test(node.textContent)) {
+    const parent = node.parentNode;
+    const text = node.textContent;
+    const frag = document.createDocumentFragment();
+
+    // if parent is a paragraph -> wrap words
+    if (parent.tagName === 'P') {
+      // split on whitespace but keep it
+      const tokens = text.split(/(\s+)/);
+      tokens.forEach(tok => {
+        if (!tok.trim()) {
+          frag.appendChild(document.createTextNode(tok));
+        } else {
+          const span = document.createElement('span');
+          span.textContent = tok;
+          span.className = 'fade-in-word';
+          span.style.setProperty('--delay', (Math.random()*2).toFixed(2) + 's');
+          span.style.setProperty('--rotate-start', '0deg');
+          frag.appendChild(span);
+        }
+      });
+    }
+    // otherwise (e.g. H1–H6, or any other tag) -> wrap letters
+    else {
+      for (const char of text) {
+        if (char === ' ') {
+          frag.appendChild(document.createTextNode(' '));
+        } else {
           const span = document.createElement('span');
           span.textContent = char;
           span.className = 'fade-in-letter';
-          // random delay 0–2s
           span.style.setProperty('--delay', (Math.random()*2).toFixed(2) + 's');
-          // random rotation –20° to +20°
           span.style.setProperty('--rotate-start', (Math.random()*40 - 20).toFixed(0) + 'deg');
           frag.appendChild(span);
         }
-        parent.replaceChild(frag, node);
-        parent.dataset.fadeWrapped = 'true';
-      }
-      // If element node, recurse into children
-      else if (node.nodeType === Node.ELEMENT_NODE) {
-        for (const child of Array.from(node.childNodes)) {
-          wrapText(child);
-        }
       }
     }
+
+    parent.replaceChild(frag, node);
+    parent.dataset.fadeWrapped = 'true';
+  }
+  // recurse into element nodes
+  else if (node.nodeType === Node.ELEMENT_NODE) {
+    node.childNodes.forEach(wrapText);
+  }
+}
 
     // 2. Initial pass on existing content
     document.querySelectorAll('body *').forEach(el => wrapText(el));
