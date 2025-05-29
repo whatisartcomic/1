@@ -28,39 +28,38 @@ $(document).ready(function() {
         `);
       });
 
-      // Initialize Turn.js
-      //const w = $fb.width();
-      //const h = $fb.height();
-      const w = 800;
-      const h = 600;
+      // Initialize Turn.js dynamically sizing
+      const $firstImg = $fb.find('img').first();
+      const initFlipbook = (w, h) => {
+        $fb
+          .css({ width: w + 'px', height: h + 'px' })
+          .turn({
+            width: w,
+            height: h,
+            display: 'single',
+            autoCenter: false,
+            gradients: true,
+            acceleration: false,
+            duration: 600
+          });
 
-      // after you calculate w and h...
-$fb.css({ width: w + 'px', height: h + 'px' })
-   .turn({
-     width:  w,
-     height: h,
-     display: 'single',
-     autoCenter: false,
-     gradients: true,
-     acceleration: false,
-     duration: 600
-   });
+        // Bind turn events
+        $fb.off('turned').on('turned', function(e, page) {
+          $('#haikuDisplay').text(page === 1 ? '' : data[page - 2]);
+        });
+        // Advance on "?" click
+        $('#nextBtn').off('click').on('click', function() {
+          $fb.turn('next');
+        });
+      };
 
-
-
-      // On each turn, update/clear haiku
-      $fb.bind('turned', function(e, page) {
-        if (page === 1) {
-          $('#haikuDisplay').text('');
-        } else {
-          $('#haikuDisplay').text(data[page - 2]);
-        }
-      });
-
-      // Advance on “?” click
-      $('#nextBtn').off('click').on('click', () => {
-        $fb.turn('next');
-      });
+      if ($firstImg[0].complete) {
+        initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
+      } else {
+        $firstImg.on('load', function() {
+          initFlipbook(this.naturalWidth, this.naturalHeight);
+        });
+      }
     })
     .catch(err => console.error('Failed to load haikus:', err));
 });
