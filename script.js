@@ -1,4 +1,3 @@
-
 let current = Math.floor(Math.random() * 54) + 1;
 const total = 54;
 
