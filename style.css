@@ -80,10 +80,12 @@ body {
 /* Haiku text */
 .haiku {
   flex: 0 0 24%;
+  
   margin: 10px;
+  margin-top:40px;
   font-style: italic;
   white-space: pre-wrap;
-  font-size: 1.4em;
+  font-size: 4.8em;
   line-height: 1.6;
 }
 
