@@ -9,14 +9,10 @@ $(document).ready(function() {
     .then(data => {
       const $fb = $('#flipbook').empty();
 
-      // 1. Title page
-      $fb.append(`
-        <div class="page title">
-          <h1>WHAT IS ART?</h1>
-        </div>
-      `);
+      // Title page
+      $fb.append(`<div class="page title"><h1>WHAT IS ART?</h1></div>`);
 
-      // 2. One page per comic+haiku
+      // One page per comic+haiku
       data.forEach((haiku, i) => {
         const num = i + 1;
         $fb.append(`
@@ -29,13 +25,13 @@ $(document).ready(function() {
         `);
       });
 
-      // 3. Initialize Turn.js for a single full-width page
-      const containerWidth = $('#flipbook').width();
-      const containerHeight = $('#flipbook').height();
+      // Initialize Turn.js single-page
+      const cw = $('#flipbook').width();
+      const ch = $('#flipbook').height();
 
       $fb.turn({
-        width: containerWidth,
-        height: containerHeight,
+        width: cw,
+        height: ch,
         autoCenter: true,
         display: 'single',
         gradients: true,
@@ -43,10 +39,10 @@ $(document).ready(function() {
         duration: 600
       });
 
-      // 4. Advance on “?” click
+      // Next on “?” click
       $('#nextBtn').off('click').on('click', () => {
         $fb.turn('next');
       });
     })
-    .catch(err => console.error('Failed to fetch haikus.json:', err));
+    .catch(err => console.error('Error loading haikus:', err));
 });
