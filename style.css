@@ -23,7 +23,7 @@ body {
 /* Flipbook styling */
 #flipbook {
   flex: 0 0 72%;
-  height: calc(100% - 20px);
+  height: calc(100% - 44px);
   margin: 10px;
   overflow: hidden;
 }
