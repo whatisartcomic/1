@@ -40,7 +40,8 @@ $(document).ready(function() {
             autoCenter: false,
             gradients: true,
             acceleration: false,
-            duration: 900
+            duration: 900,
+            cornerSize: 100 // enable mouse corner drag area
           });
 
         // Update haiku text on each turn
