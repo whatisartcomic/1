@@ -4,13 +4,21 @@
   <meta charset="UTF-8">
   <title>WHAT IS ART?</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- jQuery + Turn.js for realistic page-flip -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
 </head>
 <body>
   <div id="gallery">
-    <img id="comic" src="images/1.png" alt="Comic panel">
-    <pre id="haiku"></pre>
-    <button id="nextBtn">Next Work →</button>
+    <div id="flipbook">
+      <!-- pages injected by script.js -->
+    </div>
+
+    <!-- Big question-mark button -->
+    <button id="nextBtn">?</button>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
