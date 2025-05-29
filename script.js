@@ -46,6 +46,7 @@ $(document).ready(function() {
           autoCenter: false,
           gradients: true,
           acceleration: true,
+          elevation:50,
           duration: 900,
           cornerSize: 100
         });
