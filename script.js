@@ -1,3 +1,5 @@
+
+
 $(document).ready(function() {
   if (typeof $.fn.turn !== 'function') {
     console.error('Turn.js not loaded:', $.fn.turn);
@@ -60,7 +62,31 @@ $(document).ready(function() {
             $('#haikuDisplay').text(data[dataIdx]);
           }
         });
-
+document.addEventListener("DOMContentLoaded", () => {
+      // Select all text-bearing elements you want to animate
+      const selectors = "h1, div";
+      document.querySelectorAll(selectors).forEach(el => {
+        const text = el.textContent;
+        el.textContent = ""; 
+        // Wrap every character
+        Array.from(text).forEach(char => {
+          if (char === " ") {
+            el.appendChild(document.createTextNode(" "));
+            return;
+          }
+          const span = document.createElement("span");
+          span.textContent = char;
+          span.classList.add("fade-in-letter");
+          // random delay between 0 and 2s
+          const delay = (Math.random() * 2).toFixed(2) + "s";
+          // random start rotation between -20° and +20°
+          const rotate = (Math.random() * 40 - 20).toFixed(0) + "deg";
+          span.style.setProperty("--delay", delay);
+          span.style.setProperty("--rotate-start", rotate);
+          el.appendChild(span);
+        });
+      });
+    });
         // Random comic on "?" button click
         $('#nextBtn').off('click').on('click', function() {
           const totalPages = $fb.turn('pages');
