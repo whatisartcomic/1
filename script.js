@@ -33,15 +33,20 @@ $(document).ready(function() {
       //const h = $fb.height();
       const w = 800;
       const h = 600;
-      $fb.turn({
-        width: w,
-        height: h,
-        display: 'single',
-        autoCenter: false,
-        gradients: true,
-        acceleration: false,
-        duration: 600
-      });
+
+      // after you calculate w and h...
+$fb.css({ width: w + 'px', height: h + 'px' })
+   .turn({
+     width:  w,
+     height: h,
+     display: 'single',
+     autoCenter: false,
+     gradients: true,
+     acceleration: false,
+     duration: 600
+   });
+
+
 
       // On each turn, update/clear haiku
       $fb.bind('turned', function(e, page) {
