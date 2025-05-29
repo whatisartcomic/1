@@ -24,6 +24,7 @@ body {
 /* Flipbook styling */
 /* 1) Make the flipbook a true clipping container with perspective */
 #flipbook {
+  margin-top:20px;
   position: relative;        /* establish a new containing block */
   overflow: hidden;          /* clip any child transforms */
   perspective: 2000px;       /* enable 3D transforms inside */
