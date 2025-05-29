@@ -48,16 +48,8 @@ $(document).ready(function() {
           $('#haikuDisplay').text(page === 1 ? '' : data[page - 2]);
         });
 
-        // Forward and backward buttons
+        // Random comic on "?" button click
         $('#nextBtn').off('click').on('click', function() {
-          $fb.turn('next');
-        });
-        $('#prevBtn').off('click').on('click', function() {
-          $fb.turn('previous');
-        });
-
-        // Random comic button
-        $('#randomBtn').off('click').on('click', function() {
           const totalPages = $fb.turn('pages');
           // Pages 2 through totalPages are comics
           const randomPage = Math.floor(Math.random() * (totalPages - 1)) + 2;
