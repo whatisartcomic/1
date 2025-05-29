@@ -1,4 +1,22 @@
- /* Base & layout */
+    .fade-in-letter {
+      opacity: 0;
+      display: inline-block;
+      /* use our custom properties for delay & start-rotation */
+      animation: fadeIn 1.6s ease-out forwards;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) rotate(var(--rotate-start));
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+      }
+    }
+/* Base & layout */
 body {
   margin: 27px;
   padding: 0;
