@@ -120,28 +120,7 @@ $(document).ready(function() {
           cornerSize: 100
         });
 
-        // script.js (inside your initFlipbook)
-$fb.turn({
-  width:  w,
-  height: h,
-  display: 'single',
-  gradients: true,
-  acceleration: true,
-  elevation: 50,
-  duration: 1200,
-  easing: 'cubic-bezier(0.22,0.61,0.36,1)',
-  cornerSize: 100,
-  when: {
-    turning: function(e, page) {
-      $(this).turn('pageElement', page).addClass('turning');
-    },
-    turned: function(e, page) {
-      $('.turning').removeClass('turning');
-    }
-  }
-});
-
-
+       
         // d) On page turn, inject & wrap the haiku text
         $fb.off('turned').on('turned', function(e, page) {
           const p = document.getElementById('haikuDisplay');
