@@ -39,7 +39,7 @@ body {
   padding: 0;
   font-family: 'Helvetica Neue', sans-serif;
   background: #fdfdfd;
-  height: 85vh;
+  height: 75vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,8 +146,7 @@ vertical-align: top;
   white-space: pre-wrap;
   font-size: 1.2rem;
   line-height: 1.4;
-  overflow:auto;
-        
+      
         
 }
 
