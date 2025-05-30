@@ -247,7 +247,7 @@ fetch('haikus.json')
 
       duration: 4000,
 
-      cornerSize: 150,
+      cornerSize: 0,
 
       
 
