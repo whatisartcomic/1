@@ -1,3 +1,24 @@
+/* ——————————————————————
+   Enlarge the “Rotate” dialog
+   —————————————————————— */
+
+.rotate-popup {
+  /* bump up the base font for the whole popup */
+  font-size: 1.25em;
+}
+
+.rotate-title {
+  /* make the heading really big */
+  font-size: 2.5em !important;
+  margin-bottom: 0.3em;
+}
+
+.rotate-content {
+  /* enlarge the body text */
+  font-size: 1.5em !important;
+}
+
+
 .page {
   position: relative;
   pointer-events: auto;
