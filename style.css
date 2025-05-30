@@ -188,12 +188,5 @@ vertical-align: top;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* ===== Turn.js paper styling ===== */
-
-/*— Make every flip leaf opaque white —*/
-#flipbook > div {
-  /* catches both static page wrappers and dynamic flip wrappers */
-  background-color: white !important;
-}
 
 
