@@ -33,7 +33,7 @@ $(document).ready(function() {
     return;
   }
 
-  // Load haikus and prepare flipbook
+  // Fetch haikus and build flipbook pages
   fetch('haikus.json')
     .then(res => res.json())
     .then(data => {
@@ -81,9 +81,8 @@ $(document).ready(function() {
             });
           } else {
             for (const char of text) {
-              if (char === ' ') {
-                frag.appendChild(document.createTextNode(' '));
-              } else {
+              if (char === ' ') frag.appendChild(document.createTextNode(' '));
+              else {
                 const span = document.createElement('span');
                 span.className = 'fade-in-letter';
                 span.textContent = char;
@@ -109,23 +108,18 @@ $(document).ready(function() {
       const initFlipbook = (w, h) => {
         $('#flipbook').css({ width: w + 'px', height: h + 'px', visibility: 'visible' });
 
-        // Init Turn.js with start handler to block all corner interactions
+        // Init Turn.js with cornerSize:0 to remove corner visuals and interactions
         $fb.turn({
-          width:        w,
-          height:       h,
-          display:      'single',
-          autoCenter:   false,
-          gradients:    true,
-          acceleration: true,
-          elevation:    200,
-          duration:     4000,
-          cornerSize:   50,  // allow corner presence but block in start
+          width:      w,
+          height:     h,
+          display:    'single',
+          autoCenter: false,
+          gradients:  true,
+          acceleration:true,
+          elevation:  200,
+          duration:   4000,
+          cornerSize: 0, // disable corner visuals and interactions
           when: {
-            start: function(e, pageObject, corner) {
-              if (corner) {
-                e.preventDefault();
-              }
-            },
             turned: function(e, page) {
               const p = document.getElementById('haikuDisplay');
               if (page === 1) p.textContent = '';
