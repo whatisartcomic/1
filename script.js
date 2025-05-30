@@ -167,3 +167,66 @@ $(document).ready(function() {
     })
     .catch(err => console.error('Failed to load haikus:', err));
 });
+
+
+    // 1) Choose the “best” English voice among those available
+    function getBestEnglishVoice(voices) {
+      // Filter for any voice whose lang starts with “en” and whose name matches “Google”/“Microsoft”/“Alex”/“Samantha”
+      const premium = voices
+        .filter(v => v.lang.startsWith('en') && /(Google|Microsoft|Alex|Samantha)/i.test(v.name))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      if (premium.length) return premium[0];
+
+      // Otherwise, just take the first English‐language voice you can find
+      const fallback = voices.filter(v => v.lang.startsWith('en'));
+      return fallback.length ? fallback[0] : null;
+    }
+
+    // 2) Once voices are ready, grab all visible text and speak it
+    function speakPageText() {
+      if (!('speechSynthesis' in window)) {
+        console.warn('Speech Synthesis not supported by this browser.');
+        return;
+      }
+
+      const allVoices = window.speechSynthesis.getVoices();
+      const chosenVoice = getBestEnglishVoice(allVoices);
+      if (!chosenVoice) {
+        console.warn('No English voice available.');
+        return;
+      }
+
+      // Grab all visible, rendered text (no HTML tags)
+      const textToSpeak = document.body.innerText.trim();
+      if (!textToSpeak) {
+        console.warn('No visible text found to speak.');
+        return;
+      }
+
+      const utter = new SpeechSynthesisUtterance(textToSpeak);
+      utter.voice = chosenVoice;
+      // Optionally tweak these for a more natural cadence:
+      // utter.rate  = 0.95;
+      // utter.pitch = 1.1;
+
+      // Cancel any in-progress speech, then speak
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 3) Hook into voiceschanged (for browsers that load voices asynchronously)
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        // Small delay to ensure DOM is painted
+        setTimeout(speakPageText, 200);
+      };
+
+      // Fallback: if voices are already loaded by the time this runs
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          if (window.speechSynthesis.getVoices().length) {
+            speakPageText();
+          }
+        }, 500);
+      });
+    }
