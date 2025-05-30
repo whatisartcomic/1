@@ -115,7 +115,7 @@ $(document).ready(function() {
           gradients:    true,
           acceleration: true,
           elevation:    200,
-          duration:     4000,
+          duration:     2000,
           cornerSize:   50,  // create wrappers but will remove interactions
           when: {
             // Block any corner drag/tap
