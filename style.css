@@ -1,8 +1,4 @@
-.haiku{
-        display: flex;
-    vertical-align: text-top;
-    align-items: flex-start;
-}
+
 
 .fade-in-letter {
       opacity: 0;
@@ -127,13 +123,17 @@ body {
 /* Haiku text */
 .haiku {
   flex: 0 0 24%;
-  
+  display: flex;
+align-items: flex-start;
+vertical-align: top;
   margin: 10px;
   margin-top:40px;
   font-style: italic;
   white-space: pre-wrap;
   font-size: 1.8em;
   line-height: 1.6;
+        
+        
 }
 
 /* “?” button */
