@@ -117,7 +117,7 @@ $(document).ready(function() {
           elevation:    200,
           duration:     2000,
           cornerSize:   50,  // create wrappers but will remove interactions
-          axis: 'vertical',  // flip along vertical axis (top-to-bottom)
+
           when: {
             // Block any corner drag/tap
             start: function(e, pageObject, corner) {
