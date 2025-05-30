@@ -87,9 +87,8 @@ $(document).ready(function() {
             });
           } else {
             for (const char of text) {
-              if (char === ' ') {
-                frag.appendChild(document.createTextNode(' '));
-              } else {
+              if (char === ' ') frag.appendChild(document.createTextNode(' '));
+              else {
                 const span = document.createElement('span');
                 span.textContent = char;
                 span.className = 'fade-in-letter';
@@ -142,7 +141,19 @@ $(document).ready(function() {
           }
         });
 
-        // c) No refresh call needed; Turn.js v4 builds wrappers automatically
+        // c) Disable touch interactions on corners
+        (function() {
+          const fbEl = document.getElementById('flipbook');
+          ['touchstart','touchmove','touchend','click','mousedown','mouseup']
+            .forEach(evt => {
+              fbEl.addEventListener(evt, e => {
+                if (e.target.closest('.corner')) {
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                }
+              }, true);
+            });
+        })();
 
         // d) "?" button remains functional
         $('#nextBtn')
@@ -159,7 +170,7 @@ $(document).ready(function() {
       };
 
       if ($firstImg[0].complete) {
-        initFlipbook($firstImg[0].naturalWidth, this.naturalHeight || $firstImg[0].naturalHeight);
+        initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
       } else {
         $firstImg.on('load', function() {
           initFlipbook(this.naturalWidth, this.naturalHeight);
