@@ -43,8 +43,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
- 
-
 }
 h1,h2,span{
 
@@ -148,6 +146,7 @@ vertical-align: top;
   white-space: pre-wrap;
   font-size: 1.2rem;
   line-height: 1.4;
+  overflow:auto;
         
         
 }
