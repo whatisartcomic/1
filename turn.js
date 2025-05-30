@@ -29,22 +29,10 @@ var has3d,
 
 	A90 = PI/2,
 
-// Detect touch *or* pointer‐capable devices:
-- isTouch = 'Touch' in window,
-+ isTouch = ('ontouchstart' in window) 
-+        || navigator.maxTouchPoints > 0 
-+        || navigator.msMaxTouchPoints > 0,
+	isTouch = 'Touch' in window,
 
-// Always bind *both* touch and mouse events:
-- events = (isTouch)
--   ? { start: 'touchstart', move: 'touchmove', end: 'touchend' }
--  : { start: 'mousedown', move: 'mousemove', end: 'mouseup' },
-+ events = {
-+   start: 'touchstart mousedown',
-+   move:  'touchmove mousemove',
-+   end:   'touchend mouseup'
-+},
-
+	events = (isTouch) ? {start: 'touchstart', move: 'touchmove', end: 'touchend'}
+			: {start: 'mousedown', move: 'mousemove', end: 'mouseup'},
 
 	// Contansts used for each corner
 	// tl * tr
