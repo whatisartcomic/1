@@ -1,4 +1,10 @@
-    .fade-in-letter {
+.haiku{
+        display: flex;
+    vertical-align: text-top;
+    align-items: flex-start;
+}
+
+.fade-in-letter {
       opacity: 0;
       display: inline-block;
       /* use our custom properties for delay & start-rotation */
