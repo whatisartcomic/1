@@ -249,6 +249,8 @@ fetch('haikus.json')
 
       cornerSize: 150,
 
+      
+
       when: {
 
         turning: function(e, page) {
@@ -256,6 +258,14 @@ fetch('haikus.json')
           // no-op
 
         },
+         last: function() {
+      return $("body").toggleClass("last");
+    },
+    start: function(event, pageObject, corner) {
+      if (corner != null) {
+        return event.preventDefault();
+      }
+    },
 
         turned: function(e, page) {
 
@@ -274,6 +284,7 @@ fetch('haikus.json')
             delete p.dataset.fadeWrapped;
 
             wrapText(p);
+            
 
           }
 
