@@ -156,7 +156,7 @@ $(document).ready(function() {
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
             let rand;
-            do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current);
+            do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current || rand == 0);
             $fb.turn('page', rand);
           });
       };
