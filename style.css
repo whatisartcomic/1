@@ -1,3 +1,12 @@
+.page {
+  position: relative;
+  pointer-events: auto;
+}
+
+.corner {
+  pointer-events: auto;
+  z-index: 9999 !important;
+}
 
 
 .fade-in-letter {
