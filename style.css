@@ -187,3 +187,18 @@ vertical-align: top;
   /* darker shadow on the turning page */
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
+/* ===== Turn.js backface fix ===== */
+
+/* Ensure every page wrapper and its faces are opaque and hide their back side */
+#flipbook .turn-page-wrapper,
+#flipbook .turn-page-wrapper > div {
+  background-color: white !important;
+  backface-visibility: hidden !important;
+}
+
+/* Also enforce on your .page/.hard classes */
+.page,
+.hard {
+  backface-visibility: hidden !important;
+}
