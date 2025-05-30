@@ -91,12 +91,15 @@ $(document).ready(function() {
         }
       }
 
-      // Wrap static headings in title page
-      document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3').forEach(el => {
-        wrapText(el);
-      });
+      // Initial build of markup (so we have images to measure)
+buildMarkup();
 
-      let flipW, flipH;
+// Wrap static headings in title page
+$fb.find('.title h1, .title h2, .title h3').each(function() {
+  wrapText(this);
+});
+
+let flipW, flipH;
       let rebuilding = false;
 
       // Build the flipbook markup based on current pagesOrder
