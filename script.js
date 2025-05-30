@@ -18,6 +18,7 @@ window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
 checkOrientation();
 
+
 $(document).ready(function() {
   // 0) Ensure Turn.js is loaded
   if (typeof $.fn.turn !== 'function') {
@@ -89,8 +90,8 @@ $(document).ready(function() {
                 const span = document.createElement('span');
                 span.textContent = char;
                 span.className = 'fade-in-letter';
-                span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
-                span.style.setProperty('--rotate-start', (Math.random() * 40 - 20).toFixed(0) + 'deg');
+                span.style.setProperty('--delay',(Math.random()*2).toFixed(2) + 's');
+                span.style.setProperty('--rotate-start',(Math.random()*40-20).toFixed(0) + 'deg');
                 frag.appendChild(span);
               }
             }
@@ -115,46 +116,36 @@ $(document).ready(function() {
         const fbEl = document.getElementById('flipbook');
         fbEl.style.visibility = 'visible';
 
-        // b) Turn.js with random corner turns
-        $fb.css({ width: w + 'px', height: h + 'px' })
-          .turn({
-            width: w,
-            height: h,
-            display: 'single',
-            autoCenter: false,
-            gradients: true,
-            acceleration: true,
-            elevation: 100,
-            duration: 1800,
-            cornerSize: 100,
-            when: {
-              turning: function(e, page) {
-                // no-op
-              },
-              turned: function(e, page) {
-                const p = document.getElementById('haikuDisplay');
-                if (page === 1) {
-                  p.textContent = '';
-                } else {
-                  const dataIdx = pagesOrder[page - 2];
-                  p.textContent = data[dataIdx];
-                  delete p.dataset.fadeWrapped;
-                  wrapText(p);
-                }
+        // b) Turn.js
+        $fb.css({ width: w + 'px', height: h + 'px' }).turn({
+          width: w,
+          height: h,
+          display: 'single',
+          autoCenter: false,
+          gradients: true,
+          acceleration: true,
+          elevation: 100,
+          duration: 1800,
+          cornerSize: 100,
+          when: {
+            turning: function(e, page) {
+              // no-op
+            },
+            turned: function(e, page) {
+              const p = document.getElementById('haikuDisplay');
+              if (page === 1) {
+                p.textContent = '';
+              } else {
+                const dataIdx = pagesOrder[page - 2];
+                p.textContent = data[dataIdx];
+                delete p.dataset.fadeWrapped;
+                wrapText(p);
               }
             }
-          })
-          .bind('start', function(event, pageObject, corner) {
-            // Hijack corner grab to go to a random page
-            const total = $(this).turn('pages');
-            let rand;
-            do {
-              rand = Math.floor(Math.random() * total) + 1;
-            } while (rand === pageObject.page);
-            pageObject.next = rand;
-          });
+          }
+        });
 
-        // c) "?" button for random jump
+        // e) "?" button for random jump
         $('#nextBtn').off('click').on('click', () => {
           const total = $fb.turn('pages');
           const randomPage = Math.floor(Math.random() * (total - 1)) + 2;
