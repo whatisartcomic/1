@@ -190,20 +190,15 @@ vertical-align: top;
 
 /* ===== Turn.js paper styling ===== */
 
-/* 1) Make the wrapper itself opaque (so you always see white, never clear) */
-#flipbook .page-wrapper {
+/*— Make every flip leaf opaque white —*/
+#flipbook > div {
+  /* catches both static page wrappers and dynamic flip wrappers */
   background-color: white !important;
-  /* don’t touch backface-visibility here */
 }
 
-/* 2) Hide the backface of each page face, but keep them white too */
-#flipbook .page-wrapper > .page {
-  background-color: white !important;
-  backface-visibility: hidden !important;
-}
-
-/* 3) As a fallback, in case Turn.js uses .hard pages */
+/*— Only hide the back face of the real page faces —*/
+#flipbook .page,
 #flipbook .hard {
-  background-color: white !important;
   backface-visibility: hidden !important;
 }
+
