@@ -108,7 +108,9 @@
     // Optionally tweak rate/pitch:
     // utter.rate  = 0.95;   // 0.1–10 (slower than default)
     // utter.pitch = 1.1;    // 0–2 (slightly higher than default)
-
+  utter.rate   = 0.8;   // 20% slower than default (0.1–10; default is 1)
+  utter.pitch  = 0.9;   // Slightly lower pitch (0–2; default is 1)
+  utter.volume = 0.8;   // 80% of max volume (0–1; default is 1)
     // Cancel any in-progress speech so they don’t overlap
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
