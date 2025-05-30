@@ -9,7 +9,7 @@ $(document).ready(function() {
   fetch('haikus.json')
     .then(res => res.json())
     .then(data => {
-      const $fb = $('#flipbook').empty();
+      const $fb = $('#flipbook').css('visibility','hidden').empty();
 
       // 1) Randomize page order
       const pagesOrder = data.map((_, i) => i);
@@ -17,9 +17,6 @@ $(document).ready(function() {
         const j = Math.floor(Math.random() * (i + 1));
         [pagesOrder[i], pagesOrder[j]] = [pagesOrder[j], pagesOrder[i]];
       }
-
-
-
 
       // 2) Title page
       $fb.append(`
@@ -49,8 +46,8 @@ $(document).ready(function() {
           const text = node.textContent;
           const frag = document.createDocumentFragment();
 
-          // Word-level for <p>
           if (parent.tagName === 'P') {
+            // word-level wrap
             text.split(/(\s+)/).forEach(tok => {
               if (!tok.trim()) {
                 frag.appendChild(document.createTextNode(tok));
@@ -63,9 +60,8 @@ $(document).ready(function() {
                 frag.appendChild(span);
               }
             });
-          }
-          // Letter-level for anything else (headings, etc.)
-          else {
+          } else {
+            // letter-level wrap
             for (const char of text) {
               if (char === ' ') {
                 frag.appendChild(document.createTextNode(' '));
@@ -73,10 +69,8 @@ $(document).ready(function() {
                 const span = document.createElement('span');
                 span.textContent = char;
                 span.className = 'fade-in-letter';
-                span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
-                span.style.setProperty('--rotate-start',
-                  (Math.random() * 40 - 20).toFixed(0) + 'deg'
-                );
+                span.style.setProperty('--delay',(Math.random()*2).toFixed(2) + 's');
+                span.style.setProperty('--rotate-start',(Math.random()*40-20).toFixed(0) + 'deg');
                 frag.appendChild(span);
               }
             }
@@ -84,30 +78,24 @@ $(document).ready(function() {
 
           parent.replaceChild(frag, node);
           parent.dataset.fadeWrapped = 'true';
-        }
-        else if (node.nodeType === Node.ELEMENT_NODE) {
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
           node.childNodes.forEach(wrapText);
         }
       }
 
-      // 5) Initial wrap of any static text on the page
-      document.querySelectorAll('body *').forEach(el => wrapText(el));
+      // 5) Initial wrap of static headings
+      document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3').forEach(el => {
+        wrapText(el);
+      });
 
       // 6) Initialize Flipbook once first image is ready
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        // a) Reveal the container
+        // a) Reveal
         const fbEl = document.getElementById('flipbook');
-        fbEl.style.visibility = 'visible';  // or fbEl.classList.remove('preload');
+        fbEl.style.visibility = 'visible';
 
-        // b) Make sure the title heading inside #flipbook is already wrapped
-        document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3, #flipbook h4, #flipbook h5, #flipbook h6')
-          .forEach(el => {
-            delete el.dataset.fadeWrapped;
-            wrapText(el);
-          });
-
-        // c) Turn.js
+        // b) Turn.js
         $fb.css({ width: w + 'px', height: h + 'px' }).turn({
           width: w,
           height: h,
@@ -117,24 +105,26 @@ $(document).ready(function() {
           acceleration: true,
           elevation: 100,
           duration: 1800,
-          cornerSize: 100
-        });
-
-       
-        // d) On page turn, inject & wrap the haiku text
-        $fb.off('turned').on('turned', function(e, page) {
-          const p = document.getElementById('haikuDisplay');
-          if (page === 1) {
-            p.textContent = '';
-          } else {
-            const dataIdx = pagesOrder[page - 2];
-            p.textContent = data[dataIdx];
-            delete p.dataset.fadeWrapped;
-            wrapText(p);
+          cornerSize: 100,
+          when: {
+            turning: function(e, page) {
+              // no-op
+            },
+            turned: function(e, page) {
+              const p = document.getElementById('haikuDisplay');
+              if (page === 1) {
+                p.textContent = '';
+              } else {
+                const dataIdx = pagesOrder[page - 2];
+                p.textContent = data[dataIdx];
+                delete p.dataset.fadeWrapped;
+                wrapText(p);
+              }
+            }
           }
         });
 
-        // e) “?” button for random jump
+        // e) "?" button for random jump
         $('#nextBtn').off('click').on('click', () => {
           const total = $fb.turn('pages');
           const randomPage = Math.floor(Math.random() * (total - 1)) + 2;
@@ -142,7 +132,7 @@ $(document).ready(function() {
         });
       };
 
-      // Wait for the first image to load its dimensions
+      // Wait for first image dimensions
       if ($firstImg[0].complete) {
         initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
       } else {
