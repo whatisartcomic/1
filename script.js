@@ -115,7 +115,7 @@ $(document).ready(function() {
           gradients:    true,
           acceleration: true,
           elevation:    1000,
-          duration:     2000,
+          duration:     200,
           cornerSize:   50,  // create wrappers but will remove interactions
 
           when: {
