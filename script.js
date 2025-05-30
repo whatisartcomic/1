@@ -1,3 +1,24 @@
+function checkOrientation() {
+  if (window.innerHeight > window.innerWidth) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Rotate Your Device',
+      text: 'This site works best in landscape mode.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      backdrop: true
+    });
+  } else {
+    Swal.close();
+  }
+}
+
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+checkOrientation();
+
+
 $(document).ready(function() {
   // 0) Ensure Turn.js is loaded
   if (typeof $.fn.turn !== 'function') {
