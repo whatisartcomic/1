@@ -33,39 +33,33 @@ $(document).ready(function() {
     return;
   }
 
-  // Load haikus and build flipbook pages
+  // Load haikus and prepare flipbook
   fetch('haikus.json')
     .then(res => res.json())
     .then(data => {
       const $fb = $('#flipbook').css('visibility', 'hidden').empty();
 
-      // 1) Randomize page order
+      // Randomize page order
       const pagesOrder = data.map((_, i) => i);
       for (let i = pagesOrder.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pagesOrder[i], pagesOrder[j]] = [pagesOrder[j], pagesOrder[i]];
       }
 
-      // 2) Title page
-      $fb.append(`
-        <div class="page title">
-          <h1>WHAT IS ART?</h1>
-        </div>
-      `);
+      // Title page
+      $fb.append(
+        `<div class="page title"><h1>WHAT IS ART?</h1></div>`
+      );
 
-      // 3) Comic pages
+      // Comic pages
       pagesOrder.forEach(idx => {
         const imgNum = idx + 1;
-        $fb.append(`
-          <div class="page">
-            <div class="comic-frame">
-              <img src="images/webp/${imgNum}.webp" alt="Comic ${imgNum}">
-            </div>
-          </div>
-        `);
+        $fb.append(
+          `<div class="page"><div class="comic-frame"><img src="images/webp/${imgNum}.webp" alt="Comic ${imgNum}"></div></div>`
+        );
       });
 
-      // 4) Text wrapping utility
+      // Text wrapping utility
       function wrapText(node) {
         if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
         if (node.nodeType === Node.TEXT_NODE && /\S/.test(node.textContent)) {
@@ -78,8 +72,8 @@ $(document).ready(function() {
               if (!tok.trim()) frag.appendChild(document.createTextNode(tok));
               else {
                 const span = document.createElement('span');
-                span.textContent = tok;
                 span.className = 'fade-in-word';
+                span.textContent = tok;
                 span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
                 span.style.setProperty('--rotate-start', '0deg');
                 frag.appendChild(span);
@@ -87,11 +81,12 @@ $(document).ready(function() {
             });
           } else {
             for (const char of text) {
-              if (char === ' ') frag.appendChild(document.createTextNode(' '));
-              else {
+              if (char === ' ') {
+                frag.appendChild(document.createTextNode(' '));
+              } else {
                 const span = document.createElement('span');
-                span.textContent = char;
                 span.className = 'fade-in-letter';
+                span.textContent = char;
                 span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
                 span.style.setProperty('--rotate-start', (Math.random() * 40 - 20).toFixed(0) + 'deg');
                 frag.appendChild(span);
@@ -106,32 +101,35 @@ $(document).ready(function() {
         }
       }
 
-      // 5) Initial wrap of headings
-      document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3').forEach(el => wrapText(el));
+      // Initial wrap of headings
+      document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3').forEach(wrapText);
 
-      // 6) Initialize Flipbook when first image loads
+      // Initialize flipbook when first image loads
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        // a) Size and show flipbook container
         $('#flipbook').css({ width: w + 'px', height: h + 'px', visibility: 'visible' });
 
-        // b) Initialize Turn.js with no corner interactions
+        // Init Turn.js with start handler to block all corner interactions
         $fb.turn({
-          width:      w,
-          height:     h,
-          display:    'single',
-          autoCenter: false,
-          gradients:  true,
-          acceleration:true,
-          elevation:  200,
-          duration:   4000,
-          cornerSize: 0, // disable all corner drags and clicks
+          width:        w,
+          height:       h,
+          display:      'single',
+          autoCenter:   false,
+          gradients:    true,
+          acceleration: true,
+          elevation:    200,
+          duration:     4000,
+          cornerSize:   50,  // allow corner presence but block in start
           when: {
+            start: function(e, pageObject, corner) {
+              if (corner) {
+                e.preventDefault();
+              }
+            },
             turned: function(e, page) {
               const p = document.getElementById('haikuDisplay');
-              if (page === 1) {
-                p.textContent = '';
-              } else {
+              if (page === 1) p.textContent = '';
+              else {
                 const dataIdx = pagesOrder[page - 2];
                 p.textContent = data[dataIdx];
                 delete p.dataset.fadeWrapped;
@@ -141,41 +139,19 @@ $(document).ready(function() {
           }
         });
 
-        // c) Disable touch interactions on corners
-        (function() {
-          const fbEl = document.getElementById('flipbook');
-          ['touchstart','touchmove','touchend','click','mousedown','mouseup']
-            .forEach(evt => {
-              fbEl.addEventListener(evt, e => {
-                if (e.target.closest('.corner')) {
-                  e.preventDefault();
-                  e.stopImmediatePropagation();
-                }
-              }, true);
-            });
-        })();
-
-        // d) "?" button remains functional
-        $('#nextBtn')
-          .off('click')
-          .on('click', () => {
-            const total = $fb.turn('pages');
-            const current = $fb.turn('page');
-            let rand;
-            do {
-              rand = Math.floor(Math.random() * total) + 1;
-            } while (rand === current);
-            $fb.turn('page', rand);
-          });
+        // "?" button functionality
+        $('#nextBtn').off('click').on('click', () => {
+          const total = $fb.turn('pages');
+          const current = $fb.turn('page');
+          let rand;
+          do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current);
+          $fb.turn('page', rand);
+        });
       };
 
-      if ($firstImg[0].complete) {
-        initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
-      } else {
-        $firstImg.on('load', function() {
-          initFlipbook(this.naturalWidth, this.naturalHeight);
-        });
-      }
+      if ($firstImg[0].complete) initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
+      else $firstImg.on('load', function() { initFlipbook(this.naturalWidth, this.naturalHeight); });
+
     })
     .catch(err => console.error('Failed to load haikus:', err));
 });
