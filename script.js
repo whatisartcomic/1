@@ -253,11 +253,12 @@ fetch('haikus.json')
 
       when: {
 
-        turning: function(e, page) {
-
-          // no-op
-
-        },
+        turning: function(event, page, newView) {
+        if ($(this).turn('data').hover) {
+          $(this).turn('data').hover = false;
+          event.preventDefault();
+        }
+     },
          last: function() {
       return $("body").toggleClass("last");
     },
