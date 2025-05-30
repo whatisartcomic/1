@@ -114,7 +114,7 @@ $(document).ready(function() {
           autoCenter:   true,
           gradients:    true,
           acceleration: true,
-          elevation:    400,
+          elevation:    600,
           duration:     2400,
           cornerSize:   50,  // create wrappers but will remove interactions
 
@@ -156,7 +156,7 @@ $(document).ready(function() {
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
             let rand;
-            do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current || rand == 0);
+            do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current || rand == 1);
             $fb.turn('page', rand);
           });
       };
