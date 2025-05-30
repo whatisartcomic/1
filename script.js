@@ -18,7 +18,6 @@ window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
 checkOrientation();
 
-
 $(document).ready(function() {
   // 0) Ensure Turn.js is loaded
   if (typeof $.fn.turn !== 'function') {
@@ -30,7 +29,7 @@ $(document).ready(function() {
   fetch('haikus.json')
     .then(res => res.json())
     .then(data => {
-      const $fb = $('#flipbook').css('visibility','hidden').empty();
+      const $fb = $('#flipbook').css('visibility', 'hidden').empty();
 
       // 1) Randomize page order
       const pagesOrder = data.map((_, i) => i);
@@ -68,7 +67,7 @@ $(document).ready(function() {
           const frag = document.createDocumentFragment();
 
           if (parent.tagName === 'P') {
-            // word-level wrap
+            // word‐level wrap
             text.split(/(\s+)/).forEach(tok => {
               if (!tok.trim()) {
                 frag.appendChild(document.createTextNode(tok));
@@ -82,7 +81,7 @@ $(document).ready(function() {
               }
             });
           } else {
-            // letter-level wrap
+            // letter‐level wrap
             for (const char of text) {
               if (char === ' ') {
                 frag.appendChild(document.createTextNode(' '));
@@ -90,8 +89,8 @@ $(document).ready(function() {
                 const span = document.createElement('span');
                 span.textContent = char;
                 span.className = 'fade-in-letter';
-                span.style.setProperty('--delay',(Math.random()*2).toFixed(2) + 's');
-                span.style.setProperty('--rotate-start',(Math.random()*40-20).toFixed(0) + 'deg');
+                span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
+                span.style.setProperty('--rotate-start', (Math.random() * 40 - 20).toFixed(0) + 'deg');
                 frag.appendChild(span);
               }
             }
@@ -105,19 +104,14 @@ $(document).ready(function() {
       }
 
       // 5) Initial wrap of static headings
-      document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3').forEach(el => {
-        wrapText(el);
-      });
+      document
+        .querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3')
+        .forEach(el => wrapText(el));
 
       // 6) Initialize Flipbook once first image is ready
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        // a) Reveal
-        const fbEl = document.getElementById('flipbook');
-        fbEl.style.visibility = 'visible';
-
-        // b) Turn.js
-        $fb.css({ width: w + 'px', height: h + 'px' }).turn({
+        $('#flipbook').css({ width: w + 'px', height: h + 'px' }).turn({
           width: w,
           height: h,
           display: 'single',
@@ -128,6 +122,15 @@ $(document).ready(function() {
           duration: 1800,
           cornerSize: 100,
           when: {
+            // hijack every corner grab to flip to a truly random page
+            start: function(event, pageObject, corner) {
+              const total = $(this).turn('pages');
+              let rand;
+              do {
+                rand = Math.floor(Math.random() * total) + 1;
+              } while (rand === pageObject.page);
+              pageObject.next = rand;
+            },
             turning: function(e, page) {
               // no-op
             },
@@ -145,15 +148,26 @@ $(document).ready(function() {
           }
         });
 
-        // e) "?" button for random jump
-        $('#nextBtn').off('click').on('click', () => {
-          const total = $fb.turn('pages');
-          const randomPage = Math.floor(Math.random() * (total - 1)) + 2;
-          $fb.turn('page', randomPage);
-        });
+        // force‐refresh all wrappers before letting the user jump around
+        $fb.turn('refresh');
+
+        // "?" button for random jump
+        $('#nextBtn')
+          .off('click')
+          .on('click', () => {
+            const total = $fb.turn('pages');
+            const current = $fb.turn('page');
+            let rand;
+            do {
+              rand = Math.floor(Math.random() * total) + 1;
+            } while (rand === current);
+            $fb.turn('page', rand);
+          });
+
+        // finally unhide
+        $('#flipbook').css('visibility', 'visible');
       };
 
-      // Wait for first image dimensions
       if ($firstImg[0].complete) {
         initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
       } else {
