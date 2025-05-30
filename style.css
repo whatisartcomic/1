@@ -188,22 +188,21 @@ vertical-align: top;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/*— Make both sides of every page solid white and hide the back face —*/
+/* ===== Turn.js paper styling ===== */
 
-/* 1. The wrapper that Turn.js creates around each page */
+/* 1) Make the wrapper itself opaque (so you always see white, never clear) */
 #flipbook .page-wrapper {
   background-color: white !important;
-  backface-visibility: hidden !important;
+  /* don’t touch backface-visibility here */
 }
 
-/* 2. The actual page element inside that wrapper */
+/* 2) Hide the backface of each page face, but keep them white too */
 #flipbook .page-wrapper > .page {
   background-color: white !important;
   backface-visibility: hidden !important;
 }
 
-/* 3. In case any standalone .page or .hard classes slip through */
-#flipbook .page,
+/* 3) As a fallback, in case Turn.js uses .hard pages */
 #flipbook .hard {
   background-color: white !important;
   backface-visibility: hidden !important;
