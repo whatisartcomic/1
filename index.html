@@ -119,7 +119,7 @@
   // ─── 4) On initial page load, give the DOM a moment, then speak once ───────❍
   document.addEventListener('DOMContentLoaded', () => {
     // Wait 100ms to let any synchronous JS finish injecting initial content
-    setTimeout(speakHaikuText, 100);
+    setTimeout(speakHaikuText, 500);
   });
 
   // ─── 5) Observe #haikuDisplay and re-speak whenever its text changes ─────❍
