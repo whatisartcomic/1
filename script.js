@@ -47,9 +47,7 @@ $(document).ready(function() {
       }
 
       // Title page
-      $fb.append(
-        `<div class="page title"><h1>WHAT IS ART?</h1></div>`
-      );
+      $fb.append(`<div class="page title"><h1>WHAT IS ART?</h1></div>`);
 
       // Comic pages
       pagesOrder.forEach(idx => {
@@ -108,18 +106,23 @@ $(document).ready(function() {
       const initFlipbook = (w, h) => {
         $('#flipbook').css({ width: w + 'px', height: h + 'px', visibility: 'visible' });
 
-        // Init Turn.js with cornerSize:0 to remove corner visuals and interactions
+        // Initialize Turn.js
         $fb.turn({
-          width:      w,
-          height:     h,
-          display:    'single',
-          autoCenter: false,
-          gradients:  true,
-          acceleration:true,
-          elevation:  200,
-          duration:   4000,
-          cornerSize: 0, // disable corner visuals and interactions
+          width:        w,
+          height:       h,
+          display:      'single',
+          autoCenter:   false,
+          gradients:    true,
+          acceleration: true,
+          elevation:    200,
+          duration:     4000,
+          cornerSize:   50,  // create wrappers but will remove interactions
           when: {
+            // Block any corner drag/tap
+            start: function(e, pageObject, corner) {
+              if (corner) e.preventDefault();
+            },
+            // Haiku display update
             turned: function(e, page) {
               const p = document.getElementById('haikuDisplay');
               if (page === 1) p.textContent = '';
@@ -133,14 +136,19 @@ $(document).ready(function() {
           }
         });
 
-        // "?" button functionality
-        $('#nextBtn').off('click').on('click', () => {
-          const total = $fb.turn('pages');
-          const current = $fb.turn('page');
-          let rand;
-          do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current);
-          $fb.turn('page', rand);
-        });
+        // Remove corner elements entirely
+        $fb.find('.corner').remove();
+
+        // Only the button can turn pages
+        $('#nextBtn')
+          .off('click')
+          .on('click', () => {
+            const total   = $fb.turn('pages');
+            const current = $fb.turn('page');
+            let rand;
+            do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current);
+            $fb.turn('page', rand);
+          });
       };
 
       if ($firstImg[0].complete) initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
