@@ -115,7 +115,7 @@ $(document).ready(function() {
           autoCenter: false,
           gradients: true,
           acceleration: true,
-          elevation: 50,
+          elevation: 100,
           duration: 1800,
           cornerSize: 100
         });
