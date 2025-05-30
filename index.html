@@ -53,28 +53,30 @@
   <!-- 3. Logic -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="script.js"></script>
-    <script>
+<script>
   // ─── 1) Helper: pick the “best” available English voice ─────────────────❍
-  function getBestEnglishVoice(voices) {
-    // First look for voices whose name includes Google/Microsoft/Alex/Samantha
-    const premium = voices
-      .filter(v => v.lang.startsWith('en') && /(Google|Microsoft|Alex|Samantha)/i.test(v.name))
+  function getSoftEnglishVoice(voices) {
+    // Prefer a softer female‐sounding name if possible
+    // (e.g. “Samantha”, “Zira”, “Linda”, “Amy” on many systems).
+    const soft = voices
+      .filter(v => v.lang.startsWith('en') && /(Samantha|Zira|Linda|Amy)/i.test(v.name))
       .sort((a, b) => a.name.localeCompare(b.name));
-    if (premium.length) return premium[0];
+    if (soft.length) return soft[0];
 
-    // Otherwise fall back to the first English-language voice
+    // Fallback: any English‐language voice
     const fallback = voices.filter(v => v.lang.startsWith('en'));
     return fallback.length ? fallback[0] : null;
   }
 
-  // ─── 2) Return a Promise that resolves once at least one voice is available ───❍
+  // ─── 2) Return a Promise that resolves once voices are fully loaded ────❍
   function waitForVoices() {
     return new Promise(resolve => {
       const loaded = window.speechSynthesis.getVoices();
       if (loaded.length) {
+        // Voices are already available
         resolve(loaded);
       } else {
-        // If voices aren’t ready, listen for onvoiceschanged
+        // Wait for the onvoiceschanged event
         window.speechSynthesis.onvoiceschanged = () => {
           const now = window.speechSynthesis.getVoices();
           if (now.length) {
@@ -85,49 +87,51 @@
     });
   }
 
-  // ─── 3) Grab the <p id="haikuDisplay"> text and speak it ──────────────────❍
-  async function speakHaikuText() {
-    // 3a) If the browser doesn’t support speechSynthesis, bail
-    if (!('speechSynthesis' in window)) return;
+  // ─── 3) Global variable to store our “locked‐in” voice ───────────────────❍
+  let chosenVoice = null;
 
-    // 3b) Wait until voices are loaded
-    const voices = await waitForVoices();
-    const chosenVoice = getBestEnglishVoice(voices);
-    if (!chosenVoice) return;
+  // ─── 4) Once voices are ready, pick the voice and do the first read ─────❍
+  waitForVoices().then(voices => {
+    chosenVoice = getSoftEnglishVoice(voices);
+    if (!chosenVoice) {
+      console.warn('No suitable English voice found.');
+      return;
+    }
+    // Immediately read whatever is in #haikuDisplay (if any text is already there)
+    speakHaikuText();
+  });
 
-    // 3c) Grab the text from #haikuDisplay (or bail if the element is missing)
+  // ─── 5) Synchronous function to read the current #haikuDisplay using chosenVoice ─❍
+  function speakHaikuText() {
+    if (!chosenVoice) {
+      // If voice isn’t ready yet, just return—initial call will happen in .then() above.
+      return;
+    }
     const container = document.getElementById('haikuDisplay');
     if (!container) return;
 
     const textToSpeak = container.innerText.trim();
-    if (!textToSpeak) return; // nothing to read
+    if (!textToSpeak) return;
 
-    // 3d) Build and speak the utterance
+    // Build a fresh utterance each time, but reuse chosenVoice
     const utter = new SpeechSynthesisUtterance(textToSpeak);
     utter.voice = chosenVoice;
-    // Optionally tweak rate/pitch:
-    // utter.rate  = 0.95;   // 0.1–10 (slower than default)
-    // utter.pitch = 1.1;    // 0–2 (slightly higher than default)
-  utter.rate   = 0.8;   // 20% slower than default (0.1–10; default is 1)
-  utter.pitch  = 0.9;   // Slightly lower pitch (0–2; default is 1)
-  utter.volume = 0.8;   // 80% of max volume (0–1; default is 1)
-    // Cancel any in-progress speech so they don’t overlap
+
+    // ─── SOFTENING PARAMETERS ─────────────────────────────────────────────❍
+    utter.rate   = 0.85;   // 15% slower than default
+    utter.pitch  = 0.9;    // slightly lower pitch
+    utter.volume = 0.8;    // 80% of max volume
+
+    // Cancel any in-progress speech, then speak
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
   }
 
-  // ─── 4) On initial page load, give the DOM a moment, then speak once ───────❍
-  document.addEventListener('DOMContentLoaded', () => {
-    // Wait 100ms to let any synchronous JS finish injecting initial content
-    setTimeout(speakHaikuText, 500);
-  });
-
-  // ─── 5) Observe #haikuDisplay and re-speak whenever its text changes ─────❍
+  // ─── 6) Observe #haikuDisplay so that on any AJAX/text change we re-speak ─❍
   (function observeHaikuChanges() {
     const targetNode = document.getElementById('haikuDisplay');
     if (!targetNode) return;
 
-    // We'll batch rapid changes so we only call speakHaikuText() once per “burst”
     let throttleTimeout = null;
     const throttledSpeak = () => {
       if (throttleTimeout) clearTimeout(throttleTimeout);
@@ -139,14 +143,15 @@
 
     const observerConfig = {
       childList: true,      // watch for new/removed child nodes
-      subtree: true,        // watch any descendant changes
-      characterData: true   // watch text node updates
+      subtree: true,        // watch descendants
+      characterData: true   // watch for text changes
     };
 
     const observer = new MutationObserver(throttledSpeak);
     observer.observe(targetNode, observerConfig);
   })();
 </script>
+
 
 </body>
 </html>
