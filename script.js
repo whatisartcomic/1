@@ -225,7 +225,20 @@ fetch('haikus.json')
 
     fbEl.style.visibility = 'visible';
 
-
+;(function(){
+  const fb = document.getElementById('flipbook');
+  if (!fb) return;
+  
+  // Intercept before Turn.js gets the event
+  ['mousedown','mouseup','click','touchstart','touchend'].forEach(evt => {
+    fb.addEventListener(evt, e => {
+      if (e.target.classList.contains('corner')) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    }, true); // <-- note: use capture phase
+  });
+})();
 
     // b) Turn.js
 
