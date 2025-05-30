@@ -18,8 +18,6 @@ $(document).ready(function() {
         [pagesOrder[i], pagesOrder[j]] = [pagesOrder[j], pagesOrder[i]];
       }
 
-      $fb.append('<div class="page hard">whatIsArt.comic - Volume 1</div>');
-      $fb.append('<div class="page hard"></div>');
 
 
 
@@ -41,8 +39,7 @@ $(document).ready(function() {
           </div>
         `);
       });
-      $fb.append('<div class="page hard"></div>');
-      $fb.append('<div class="page hard"></div>');
+
       // 4) wrapText utility (letters for headings, words for paragraphs)
       function wrapText(node) {
         if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
