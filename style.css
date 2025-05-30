@@ -134,11 +134,11 @@ h1,h2,span{
   display: flex;
 align-items: flex-start;
 vertical-align: top;
-  margin: 10px;
+  margin-right: 10px;
   font-style: italic;
   white-space: pre-wrap;
   font-size: 1.6em;
-  line-height: 1.6;
+  line-height: 1.4;
         
         
 }
