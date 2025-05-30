@@ -174,8 +174,8 @@ vertical-align: top;
 .page, .hard {
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 .page {
   box-shadow: 
