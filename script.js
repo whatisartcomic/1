@@ -230,40 +230,58 @@ fetch('haikus.json')
     // b) Turn.js
 
     $fb.css({ width: w + 'px', height: h + 'px' }).turn({
-  width: w,
-  height: h,
-  display: 'single',
-  autoCenter: false,
-  gradients: true,
-  acceleration: true,
-  elevation: 100,
-  duration: 1800,
-  cornerSize: 100,
-  when: {
-    // ← add this:
-    start: function(e, opts, corner) {
-      const total = $(this).turn('pages');
-      // pick random between 1 and total
-      const rand = Math.floor(Math.random()*total) + 1;
-      opts.next  = rand;
-      opts.force = true;
-    },
-    turning: function(e, page) {
-      // no-op
-    },
-    turned: function(e, page) {
-      const p = document.getElementById('haikuDisplay');
-      if (page === 1) {
-        p.textContent = '';
-      } else {
-        const dataIdx = pagesOrder[page - 2];
-        p.textContent = data[dataIdx];
-        delete p.dataset.fadeWrapped;
-        wrapText(p);
+
+      width: w,
+
+      height: h,
+
+      display: 'single',
+
+      autoCenter: false,
+
+      gradients: true,
+
+      acceleration: true,
+
+      elevation: 100,
+
+      duration: 1800,
+
+      cornerSize: 100,
+
+      when: {
+
+        turning: function(e, page) {
+
+          // no-op
+
+        },
+
+        turned: function(e, page) {
+
+          const p = document.getElementById('haikuDisplay');
+
+          if (page === 1) {
+
+            p.textContent = '';
+
+          } else {
+
+            const dataIdx = pagesOrder[page - 2];
+
+            p.textContent = data[dataIdx];
+
+            delete p.dataset.fadeWrapped;
+
+            wrapText(p);
+
+          }
+
+        }
+
       }
-    }
-  }
-});
+
+    });
 
 
 
