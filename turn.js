@@ -29,10 +29,31 @@ var has3d,
 
 	A90 = PI/2,
 
-	isTouch = 'Touch' in window,
+// (some lines above)
+var has3d,
+    vendor = '',
+    PI = Math.PI,
+    A90 = PI/2,
 
-	events = (isTouch) ? {start: 'touchstart', move: 'touchmove', end: 'touchend'}
-			: {start: 'mousedown', move: 'mousemove', end: 'mouseup'},
+    // ← Replace these two lines:
+-   isTouch = 'Touch' in window,
+-   events = (isTouch)
+-     ? { start: 'touchstart', move: 'touchmove', end: 'touchend' }
+-     : { start: 'mousedown', move: 'mousemove', end: 'mouseup' },
+
+    // …with this…
+    isTouch = ('ontouchstart' in window)
+           || navigator.maxTouchPoints > 0
+           || navigator.msMaxTouchPoints > 0,
+
+    events = {
+      start: 'touchstart mousedown',
+      move:  'touchmove mousemove',
+      end:   'touchend mouseup'
+    },
+
+    // (rest of the file continues)
+
 
 	// Contansts used for each corner
 	// tl * tr
