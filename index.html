@@ -54,79 +54,97 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="script.js"></script>
     <script>
-    // 1) Helper: pick the “best” available English voice
-    function getBestEnglishVoice(voices) {
-      const premium = voices
-        .filter(v => v.lang.startsWith('en') && /(Google|Microsoft|Alex|Samantha)/i.test(v.name))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      if (premium.length) return premium[0];
-      const fallback = voices.filter(v => v.lang.startsWith('en'));
-      return fallback.length ? fallback[0] : null;
-    }
+  // ─── 1) Helper: pick the “best” available English voice ─────────────────❍
+  function getBestEnglishVoice(voices) {
+    // First look for voices whose name includes Google/Microsoft/Alex/Samantha
+    const premium = voices
+      .filter(v => v.lang.startsWith('en') && /(Google|Microsoft|Alex|Samantha)/i.test(v.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    if (premium.length) return premium[0];
 
-    // 2) The function that actually gathers text and speaks it
-    function speakPageText() {
-      if (!('speechSynthesis' in window)) return;
+    // Otherwise fall back to the first English-language voice
+    const fallback = voices.filter(v => v.lang.startsWith('en'));
+    return fallback.length ? fallback[0] : null;
+  }
 
-      const allVoices = window.speechSynthesis.getVoices();
-      const chosenVoice = getBestEnglishVoice(allVoices);
-      if (!chosenVoice) return;
-
-      // Take only visible text under #mainContent (or you could use body)
-      const container = document.getElementById('haikuDisplay');
-      const textToSpeak = container.innerText.trim();
-      if (!textToSpeak) return;
-
-      const utter = new SpeechSynthesisUtterance(textToSpeak);
-      utter.voice = chosenVoice;
-      // Tweak these if you like:
-      // utter.rate  = 0.95;
-      // utter.pitch = 1.1;
-
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utter);
-    }
-
-    // 3) Once voices load, run an initial speak (in case content was already there)
-    function trySpeakingImmediately() {
-      // Some browsers load voices asynchronously
-      if (window.speechSynthesis.getVoices().length) {
-        speakPageText();
+  // ─── 2) Return a Promise that resolves once at least one voice is available ───❍
+  function waitForVoices() {
+    return new Promise(resolve => {
+      const loaded = window.speechSynthesis.getVoices();
+      if (loaded.length) {
+        resolve(loaded);
+      } else {
+        // If voices aren’t ready, listen for onvoiceschanged
+        window.speechSynthesis.onvoiceschanged = () => {
+          const now = window.speechSynthesis.getVoices();
+          if (now.length) {
+            resolve(now);
+          }
+        };
       }
-    }
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = trySpeakingImmediately;
-      document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(trySpeakingImmediately, 500);
-      });
-    }
+    });
+  }
 
-    // 4) Observe #mainContent for new nodes or text changes
+  // ─── 3) Grab the <p id="haikuDisplay"> text and speak it ──────────────────❍
+  async function speakHaikuText() {
+    // 3a) If the browser doesn’t support speechSynthesis, bail
+    if (!('speechSynthesis' in window)) return;
+
+    // 3b) Wait until voices are loaded
+    const voices = await waitForVoices();
+    const chosenVoice = getBestEnglishVoice(voices);
+    if (!chosenVoice) return;
+
+    // 3c) Grab the text from #haikuDisplay (or bail if the element is missing)
+    const container = document.getElementById('haikuDisplay');
+    if (!container) return;
+
+    const textToSpeak = container.innerText.trim();
+    if (!textToSpeak) return; // nothing to read
+
+    // 3d) Build and speak the utterance
+    const utter = new SpeechSynthesisUtterance(textToSpeak);
+    utter.voice = chosenVoice;
+    // Optionally tweak rate/pitch:
+    // utter.rate  = 0.95;   // 0.1–10 (slower than default)
+    // utter.pitch = 1.1;    // 0–2 (slightly higher than default)
+
+    // Cancel any in-progress speech so they don’t overlap
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+
+  // ─── 4) On initial page load, give the DOM a moment, then speak once ───────❍
+  document.addEventListener('DOMContentLoaded', () => {
+    // Wait 100ms to let any synchronous JS finish injecting initial content
+    setTimeout(speakHaikuText, 100);
+  });
+
+  // ─── 5) Observe #haikuDisplay and re-speak whenever its text changes ─────❍
+  (function observeHaikuChanges() {
     const targetNode = document.getElementById('haikuDisplay');
-    const observerConfig = {
-      childList: true,       // watch for added/removed children
-      subtree: true,         // watch all descendants
-      characterData: true    // watch for text changes
-    };
+    if (!targetNode) return;
 
-    // Throttle speaking: if multiple mutations fire in quick succession, only speak once
-    let speakTimeout = null;
+    // We'll batch rapid changes so we only call speakHaikuText() once per “burst”
+    let throttleTimeout = null;
     const throttledSpeak = () => {
-      if (speakTimeout) clearTimeout(speakTimeout);
-      // Wait 250ms after the last mutation before speaking
-      speakTimeout = setTimeout(() => {
-        speakPageText();
-        speakTimeout = null;
+      if (throttleTimeout) clearTimeout(throttleTimeout);
+      throttleTimeout = setTimeout(() => {
+        speakHaikuText();
+        throttleTimeout = null;
       }, 250);
     };
 
-    // Only start observing once #mainContent exists
-    if (targetNode) {
-      const observer = new MutationObserver(() => {
-        throttledSpeak();
-      });
-      observer.observe(targetNode, observerConfig);
-    }
-  </script>
+    const observerConfig = {
+      childList: true,      // watch for new/removed child nodes
+      subtree: true,        // watch any descendant changes
+      characterData: true   // watch text node updates
+    };
+
+    const observer = new MutationObserver(throttledSpeak);
+    observer.observe(targetNode, observerConfig);
+  })();
+</script>
+
 </body>
 </html>
