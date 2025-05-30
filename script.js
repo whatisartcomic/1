@@ -18,6 +18,7 @@ window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
 checkOrientation();
 
+
 $(document).ready(function() {
   // 0) Ensure Turn.js is loaded
   if (typeof $.fn.turn !== 'function') {
@@ -89,8 +90,8 @@ $(document).ready(function() {
                 const span = document.createElement('span');
                 span.textContent = char;
                 span.className = 'fade-in-letter';
-                span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
-                span.style.setProperty('--rotate-start', (Math.random() * 40 - 20).toFixed(0) + 'deg');
+                span.style.setProperty('--delay',(Math.random()*2).toFixed(2) + 's');
+                span.style.setProperty('--rotate-start',(Math.random()*40-20).toFixed(0) + 'deg');
                 frag.appendChild(span);
               }
             }
@@ -111,11 +112,12 @@ $(document).ready(function() {
       // 6) Initialize Flipbook once first image is ready
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        // a) Size & hide until ready
-        $('#flipbook').css({ width: w + 'px', height: h + 'px', visibility: 'hidden' });
+        // a) Reveal
+        const fbEl = document.getElementById('flipbook');
+        fbEl.style.visibility = 'visible';
 
-        // b) Init Turn.js (no start handler here)
-        const $turn = $fb.turn({
+        // b) Turn.js
+        $fb.css({ width: w + 'px', height: h + 'px' }).turn({
           width: w,
           height: h,
           display: 'single',
@@ -126,7 +128,9 @@ $(document).ready(function() {
           duration: 1800,
           cornerSize: 100,
           when: {
-            turning: function() { /* no-op */ },
+            turning: function(e, page) {
+              // no-op
+            },
             turned: function(e, page) {
               const p = document.getElementById('haikuDisplay');
               if (page === 1) {
@@ -141,34 +145,15 @@ $(document).ready(function() {
           }
         });
 
-        // c) Hijack every corner‐grab via the parent 'start' event
-        $fb.parent().off('start.random').on('start.random', function(event, opts, corner) {
-          const total = $turn.turn('pages');
-          let rand;
-          do {
-            rand = Math.floor(Math.random() * total) + 1;
-          } while (rand === opts.page);
-          opts.next = rand;
-        });
-
-        // d) Force a refresh so all page wrappers exist
-        $turn.turn('refresh');
-
         // e) "?" button for random jump
         $('#nextBtn').off('click').on('click', () => {
-          const total = $turn.turn('pages');
-          const current = $turn.turn('page');
-          let rand;
-          do {
-            rand = Math.floor(Math.random() * total) + 1;
-          } while (rand === current);
-          $turn.turn('page', rand);
+          const total = $fb.turn('pages');
+          const randomPage = Math.floor(Math.random() * (total - 1)) + 2;
+          $fb.turn('page', randomPage);
         });
-
-        // f) Finally unhide
-        $('#flipbook').css('visibility', 'visible');
       };
 
+      // Wait for first image dimensions
       if ($firstImg[0].complete) {
         initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
       } else {
