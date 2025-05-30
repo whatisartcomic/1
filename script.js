@@ -43,6 +43,9 @@ $(document).ready(function() {
       // Initialize Turn.js with dynamic sizing
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
+         const fbEl = document.getElementById('flipbook');
+  // if you used inline style:
+        fbEl.style.visibility = 'visible';
         $fb.css({ width: w + 'px', height: h + 'px' }).turn({
           width: w,
           height: h,
