@@ -147,7 +147,7 @@ vertical-align: top;
 /* “?” button */
 #nextBtn {
   position: absolute;
-  top: 20px;
+  top: -20px;
   right: 20px;
   width: 80px;
   height: 80px;
