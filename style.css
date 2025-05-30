@@ -196,9 +196,4 @@ vertical-align: top;
   background-color: white !important;
 }
 
-/*— Only hide the back face of the real page faces —*/
-#flipbook .page,
-#flipbook .hard {
-  backface-visibility: hidden !important;
-}
 
