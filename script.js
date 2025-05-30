@@ -243,9 +243,9 @@ fetch('haikus.json')
 
       acceleration: true,
 
-      elevation: 150,
+      elevation: 200,
 
-      duration: 1800,
+      duration: 4000,
 
       cornerSize: 150,
 
