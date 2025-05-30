@@ -188,17 +188,23 @@ vertical-align: top;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* ===== Turn.js backface fix ===== */
+/*— Make both sides of every page solid white and hide the back face —*/
 
-/* Ensure every page wrapper and its faces are opaque and hide their back side */
-#flipbook .turn-page-wrapper,
-#flipbook .turn-page-wrapper > div {
+/* 1. The wrapper that Turn.js creates around each page */
+#flipbook .page-wrapper {
   background-color: white !important;
   backface-visibility: hidden !important;
 }
 
-/* Also enforce on your .page/.hard classes */
-.page,
-.hard {
+/* 2. The actual page element inside that wrapper */
+#flipbook .page-wrapper > .page {
+  background-color: white !important;
+  backface-visibility: hidden !important;
+}
+
+/* 3. In case any standalone .page or .hard classes slip through */
+#flipbook .page,
+#flipbook .hard {
+  background-color: white !important;
   backface-visibility: hidden !important;
 }
