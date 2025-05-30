@@ -33,45 +33,45 @@ $(document).ready(function() {
     return;
   }
 
-  // Load your haikus & build the pages
+  // Load haikus and build flipbook pages
   fetch('haikus.json')
     .then(res => res.json())
     .then(data => {
-      const $fb = $('#flipbook').css('visibility','hidden').empty();
+      const $fb = $('#flipbook').css('visibility', 'hidden').empty();
 
-      // Randomize
+      // 1) Randomize page order
       const pagesOrder = data.map((_, i) => i);
       for (let i = pagesOrder.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pagesOrder[i], pagesOrder[j]] = [pagesOrder[j], pagesOrder[i]];
       }
 
-      // Title page
+      // 2) Title page
       $fb.append(`
         <div class="page title">
           <h1>WHAT IS ART?</h1>
         </div>
       `);
 
-      // Comic pages
+      // 3) Comic pages
       pagesOrder.forEach(idx => {
-        const num = idx + 1;
+        const imgNum = idx + 1;
         $fb.append(`
           <div class="page">
             <div class="comic-frame">
-              <img src="images/webp/${num}.webp" alt="Comic ${num}">
+              <img src="images/webp/${imgNum}.webp" alt="Comic ${imgNum}">
             </div>
           </div>
         `);
       });
 
-      // Text-wrapping utility (same as before)
+      // 4) Text wrapping utility
       function wrapText(node) {
         if (node.nodeType === Node.ELEMENT_NODE && node.dataset.fadeWrapped) return;
         if (node.nodeType === Node.TEXT_NODE && /\S/.test(node.textContent)) {
           const parent = node.parentNode;
-          const text   = node.textContent;
-          const frag   = document.createDocumentFragment();
+          const text = node.textContent;
+          const frag = document.createDocumentFragment();
 
           if (parent.tagName === 'P') {
             text.split(/(\s+)/).forEach(tok => {
@@ -80,20 +80,21 @@ $(document).ready(function() {
                 const span = document.createElement('span');
                 span.textContent = tok;
                 span.className = 'fade-in-word';
-                span.style.setProperty('--delay',(Math.random()*2).toFixed(2)+'s');
-                span.style.setProperty('--rotate-start','0deg');
+                span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
+                span.style.setProperty('--rotate-start', '0deg');
                 frag.appendChild(span);
               }
             });
           } else {
-            for (const c of text) {
-              if (c === ' ') frag.appendChild(document.createTextNode(' '));
-              else {
+            for (const char of text) {
+              if (char === ' ') {
+                frag.appendChild(document.createTextNode(' '));
+              } else {
                 const span = document.createElement('span');
-                span.textContent = c;
+                span.textContent = char;
                 span.className = 'fade-in-letter';
-                span.style.setProperty('--delay',(Math.random()*2).toFixed(2)+'s');
-                span.style.setProperty('--rotate-start',(Math.random()*40-20).toFixed(0)+'deg');
+                span.style.setProperty('--delay', (Math.random() * 2).toFixed(2) + 's');
+                span.style.setProperty('--rotate-start', (Math.random() * 40 - 20).toFixed(0) + 'deg');
                 frag.appendChild(span);
               }
             }
@@ -106,37 +107,27 @@ $(document).ready(function() {
         }
       }
 
-      // Initial wrap of headings
-      document.querySelectorAll('#flipbook h1,#flipbook h2,#flipbook h3')
-              .forEach(el => wrapText(el));
+      // 5) Initial wrap of headings
+      document.querySelectorAll('#flipbook h1, #flipbook h2, #flipbook h3').forEach(el => wrapText(el));
 
-      // Wait for first image, then init
+      // 6) Initialize Flipbook when first image loads
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        $('#flipbook').css({
-          width:      w + 'px',
-          height:     h + 'px',
-          visibility: 'visible'
-        });
+        // a) Size and show flipbook container
+        $('#flipbook').css({ width: w + 'px', height: h + 'px', visibility: 'visible' });
 
+        // b) Initialize Turn.js with no corner interactions
         $fb.turn({
-          width:        w,     // <-- fixed from `width,`
-          height:       h,
-          display:      'single',
-          autoCenter:   false,
-          gradients:    true,
-          acceleration: true,
-          elevation:    200,
-          duration:     4000,
-          cornerSize:   100,   // keep non-zero so wrappers exist
+          width:      w,
+          height:     h,
+          display:    'single',
+          autoCenter: false,
+          gradients:  true,
+          acceleration:true,
+          elevation:  200,
+          duration:   4000,
+          cornerSize: 0, // disable all corner drags and clicks
           when: {
-            // block *all* corner interactions (drags & taps)
-            start: function(event, pageObject, corner) {
-              if (corner) {
-                event.preventDefault();
-              }
-            },
-            // update your haiku display
             turned: function(e, page) {
               const p = document.getElementById('haikuDisplay');
               if (page === 1) {
@@ -151,23 +142,24 @@ $(document).ready(function() {
           }
         });
 
-        // make sure Turn.js wrappers are all built
-        $fb.turn('refresh');
+        // c) No refresh call needed; Turn.js v4 builds wrappers automatically
 
-        // “?” random jump button
-        $('#nextBtn').off('click').on('click', () => {
-          const total   = $fb.turn('pages');
-          const current = $fb.turn('page');
-          let rand;
-          do {
-            rand = Math.floor(Math.random() * total) + 1;
-          } while (rand === current);
-          $fb.turn('page', rand);
-        });
+        // d) "?" button remains functional
+        $('#nextBtn')
+          .off('click')
+          .on('click', () => {
+            const total = $fb.turn('pages');
+            const current = $fb.turn('page');
+            let rand;
+            do {
+              rand = Math.floor(Math.random() * total) + 1;
+            } while (rand === current);
+            $fb.turn('page', rand);
+          });
       };
 
       if ($firstImg[0].complete) {
-        initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
+        initFlipbook($firstImg[0].naturalWidth, this.naturalHeight || $firstImg[0].naturalHeight);
       } else {
         $firstImg.on('load', function() {
           initFlipbook(this.naturalWidth, this.naturalHeight);
