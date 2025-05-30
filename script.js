@@ -114,7 +114,7 @@ $(document).ready(function() {
           autoCenter:   false,
           gradients:    true,
           acceleration: true,
-          elevation:    10000,
+          elevation:    5000,
           duration:     2000,
           cornerSize:   50,  // create wrappers but will remove interactions
 
