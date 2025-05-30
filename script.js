@@ -139,6 +139,15 @@ $(document).ready(function() {
         // Remove corner elements entirely
         $fb.find('.corner').remove();
 
+        // Block any click/drag/touch events on the flipbook container
+        const fbEl = $fb.get(0);
+        ['click','mousedown','mouseup','touchstart','touchmove','touchend'].forEach(evt => {
+          fbEl.addEventListener(evt, e => {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }, true);
+        });
+
         // Only the button can turn pages
         $('#nextBtn')
           .off('click')
