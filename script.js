@@ -159,7 +159,7 @@ $(document).ready(function() {
             p.textContent = '';
             buttonClickCount++;
 
-              document.getElementById('flipbook').style.borderLeft = `4px solid #f2f2f2`;
+             
 
             const flipbook = document.getElementById('flipbook');
             const thickness = 4 + Math.ceil(buttonClickCount / 4);
