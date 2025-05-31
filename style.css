@@ -1,7 +1,7 @@
 #spine-border {
     position: relative;
     right: 0;
-    top: 0;
+    top: 40px;
     height: 300px;
     width: 4px;
     background-color: #f2f2f2;
