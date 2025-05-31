@@ -1273,14 +1273,34 @@ turnMethods = {
       else
         data.pages[current].flip('turnPage',
           (page>current) ? 'l' : 'r');
-    else {
-      if (data.direction=='ltr')
-        data.pages[current].flip('turnPage',
-          optsCorners[(page>current) ? 1 : 0]);
-      else
-        data.pages[current].flip('turnPage',
-          optsCorners[(page>current) ? 0 : 1]);
-    }
+     else {
+  // We fake a vertical turn by overriding the fold effect directly
+  const flip = data.pages[current];
+  const flipData = flip.data().f;
+
+  // Force vertical animation: top-down if going forward, bottom-up if going backward
+  const vertical = (page > current) ? true : false;
+
+  // Override the internal transform function just for this turn
+  const originalTransform = flipData.wrapper.transform;
+
+  flipData.wrapper.transform = function(transformStr, origin) {
+    // replace rotateY(...) with rotateX(...) for vertical effect
+    const rotated = transformStr
+      .replace(/rotateY([^)]+)/, 'rotateX($1)')
+      .replace(/translateX([^)]+)/, 'translateY($1)');
+    return originalTransform.call(this, rotated, origin);
+  };
+
+  // Now run the page turn (still says 'br' but transform is hijacked)
+  const fakeCorner = vertical ? 'br' : 'bl';
+  flip.flip('turnPage', fakeCorner);
+
+  // Restore original transform after one tick
+  setTimeout(() => {
+    flipData.wrapper.transform = originalTransform;
+  }, 0);
+     }
 
   },
 
