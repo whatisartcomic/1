@@ -153,7 +153,8 @@ $(document).ready(function() {
 
               // 3) Set width so that the right edge stays where it was
               spine.style.width = `${spineRightX}px`;
-
+              let opac = 1 - 0.1 * buttonClickCount;
+              spine.style.opacity = `${opac}`;
               // 4) Darken from #f2f2f2 → #e0e0e0
               spine.style.backgroundColor = '#e0e0e0';
 
