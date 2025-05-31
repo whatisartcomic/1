@@ -159,7 +159,8 @@ $(document).ready(function() {
             p.textContent = '';
             buttonClickCount++;
             const thickness = Math.ceil(buttonClickCount / 4);
-            document.getElementById('flipbook').style.borderLeft = `${thickness}px solid black`;
+              document.querySelector('#flipbook::before')?.style?.setProperty?.('--border-width', `${thickness}px`);
+
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
             let rand;
