@@ -1,3 +1,9 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* or 'center' if you want both axes */
+}
+
 /* ——————————————————————
    Enlarge the “Rotate” dialog
    —————————————————————— */
