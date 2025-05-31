@@ -163,9 +163,10 @@ $(document).ready(function() {
 
             const flipbook = document.getElementById('flipbook');
             const thickness = 4 + Math.ceil(buttonClickCount / 4);
-            flipbook.style.setProperty('--border-width', `${thickness}px`);
+
             flipbook.style.setProperty('--border-color', '#f2f2f2');
-              
+            flipbook.style.setProperty('--border-width', `${thickness}px`);
+  
 
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
