@@ -104,14 +104,14 @@ $(document).ready(function() {
       // Initialize flipbook when first image loads
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        $('#flipbook').css({ width: w * 0.75 + 'px', height: h + 'px', visibility: 'visible' });
+        $('#flipbook').css({ width: w  + 'px', height: h + 20 + 'px', visibility: 'visible' });
 
         // Initialize Turn.js
         $fb.turn({
           width:        w,
           height:       h,
           display:      'single',
-          autoCenter:   false,
+          autoCenter:   true,
           gradients:    true,
           acceleration: true,
           elevation:    900,
