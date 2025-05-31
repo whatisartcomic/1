@@ -160,11 +160,12 @@ $(document).ready(function() {
             buttonClickCount++;
 
               document.getElementById('flipbook').style.borderLeft = `2px solid #f2f2f2`;
-              const flipbook = document.getElementById('flipbook');
-              flipbook.style.setProperty('--border-width', '2px');
-              flipbook.style.setProperty('--border-color', '#f2f2f2');
+
+            const flipbook = document.getElementById('flipbook');
             const thickness = Math.ceil(buttonClickCount / 4);
-              document.querySelector('#flipbook::before')?.style?.setProperty?.('--border-width', `${thickness}px`);
+            flipbook.style.setProperty('--border-width', `${thickness}px`);
+            flipbook.style.setProperty('--border-color', '#f2f2f2');
+              
 
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
