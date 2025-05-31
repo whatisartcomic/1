@@ -1,13 +1,6 @@
-// script.js
-$('#flipbook').on('turned', function(event, page) {
-  if (page === 1) {
-    // Back on the cover page
-    $(this).css('border-left', 'darkgrey ridge 8px');
-  } else {
-    // Any other page
-    $(this).css('border-left', 'black 2px solid');
-  }
-});
+let buttonClickCount = 0;
+
+
 
 function checkOrientation() {
   if (window.innerHeight > window.innerWidth) {
@@ -164,6 +157,9 @@ $(document).ready(function() {
           .on('click', () => {
             const p = document.getElementById('haikuDisplay');
             p.textContent = '';
+            buttonClickCount++;
+            const thickness = Math.ceil(buttonClickCount / 4);
+            document.getElementById('flipbook').style.borderLeft = `${thickness}px solid black`;
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
             let rand;
