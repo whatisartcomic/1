@@ -81,6 +81,7 @@ h1,h2,span{
   height: 100%;
   position: relative;
   box-sizing: border-box;
+	border: black 4px solid;
 }
 
 /* Flipbook styling */
