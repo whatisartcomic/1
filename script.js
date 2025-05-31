@@ -144,7 +144,9 @@ $(document).ready(function() {
 
               // 2) Switch to fixed positioning so left: 0 is the viewport’s left edge
               spine.style.position = 'fixed';
+              spine.style.right     = '0';
               spine.style.left     = '0';
+              
               spine.style.top      = '40px';
 
               // (No height override—keeps the 300px from CSS)
