@@ -1198,86 +1198,91 @@ turnMethods = {
   
   // Turns the page
 
-_turnPage: function(page) {
+  _turnPage: function(page) {
 
-  var current,
-    next,
-    data = this.data(),
-    place = data.pagePlace[page],
-    view = this.turn('view'),
-    newView = this.turn('view', page);
+    var current,
+      next,
+      data = this.data(),
+      place = data.pagePlace[page],
+      view = this.turn('view'),
+      newView = this.turn('view', page);
 
-  if (data.page != page) {
-    var currentPage = data.page;
 
-    if (trigger('turning', this, [page, newView]) == 'prevented') {
-      if (currentPage == data.page && data.pageMv.indexOf(place) != -1)
-        data.pages[place].flip('hideFoldedPage', true);
-      return;
+    if (data.page!=page) {
+
+      var currentPage = data.page;
+
+      if (trigger('turning', this, [page, newView])=='prevented') {
+
+        if (currentPage==data.page && data.pageMv.indexOf(place)!=-1)
+          data.pages[place].flip('hideFoldedPage', true);
+        
+        return;
+
+      }
+
+      if (newView.indexOf(1)!=-1)
+        this.trigger('first');
+      if (newView.indexOf(data.totalPages)!=-1)
+        this.trigger('last');
+
     }
 
-    if (newView.indexOf(1) != -1)
-      this.trigger('first');
-    if (newView.indexOf(data.totalPages) != -1)
-      this.trigger('last');
-  }
+    if (data.display=='single') {
+      current = view[0];
+      next = newView[0];
+    } else if (view[1] && page>view[1]) {
+      current = view[1];
+      next = newView[0];
+    } else if (view[0] && page<view[0]) {
+      current = view[0];
+      next = newView[1];
+    }
 
-  if (data.display == 'single') {
-    current = view[0];
-    next = newView[0];
-  } else if (view[1] && page > view[1]) {
-    current = view[1];
-    next = newView[0];
-  } else if (view[0] && page < view[0]) {
-    current = view[0];
-    next = newView[1];
-  }
-
-  // 🔥 Force vertical turn direction (only here)
-  var optsCorners = (page > data.page) ? ['tc', 'tc'] : ['bc', 'bc'];
-
-  var flipData = data.pages[current].data().f,
+    var optsCorners = data.opts.turnCorners.split(','),
+      flipData = data.pages[current].data().f,
       opts = flipData.opts,
       actualPoint = flipData.point;
 
-  turnMethods._missing.call(this, page);
+    turnMethods._missing.call(this, page);
+    
+    if (!data.pageObjs[page])
+      return;
 
-  if (!data.pageObjs[page])
-    return;
+    this.turn('stop');
 
-  this.turn('stop');
+    data.page = page;
 
-  data.page = page;
+    turnMethods._makeRange.call(this);
 
-  turnMethods._makeRange.call(this);
+    data.tpage = next;
 
-  data.tpage = next;
+    if (opts.next!=next) {
+      opts.next = next;
+      opts.force = true;
+    }
 
-  if (opts.next != next) {
-    opts.next = next;
-    opts.force = true;
-  }
+    this.turn('update');
 
-  this.turn('update');
+    flipData.point = actualPoint;
+    
+    if (flipData.effect=='hard')
+      if (data.direction=='ltr')
+        data.pages[current].flip('turnPage',
+          (page>current) ? 'r' : 'l');
+      else
+        data.pages[current].flip('turnPage',
+          (page>current) ? 'l' : 'r');
+    else {
+      if (data.direction=='ltr')
+        data.pages[current].flip('turnPage',
+          optsCorners[(page>current) ? 1 : 0]);
+      else
+        data.pages[current].flip('turnPage',
+          optsCorners[(page>current) ? 0 : 1]);
+    }
 
-  flipData.point = actualPoint;
-
-  if (flipData.effect == 'hard') {
-    if (data.direction == 'ltr')
-      data.pages[current].flip('turnPage',
-        (page > current) ? 'r' : 'l');
-    else
-      data.pages[current].flip('turnPage',
-        (page > current) ? 'l' : 'r');
-  } else {
-    if (data.direction == 'ltr')
-      data.pages[current].flip('turnPage',
-        optsCorners[(page > current) ? 1 : 0]);
-    else
-      data.pages[current].flip('turnPage',
-        optsCorners[(page > current) ? 0 : 1]);
-  }
-},
+  },
 
   // Gets and sets a page
 
