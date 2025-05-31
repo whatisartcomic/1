@@ -111,11 +111,11 @@ $(document).ready(function() {
           width:        w,
           height:       h,
           display:      'single',
-          autoCenter:   true,
+          autoCenter:   false,
           gradients:    true,
           acceleration: true,
-          elevation:    600,
-          duration:     2400,
+          elevation:    900,
+          duration:     3600,
           cornerSize:   50,  // create wrappers but will remove interactions
 
           when: {
