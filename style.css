@@ -111,7 +111,7 @@ h1,h2,span{
  /*  width: 800px;              match your page width or set via JS */
   height: 600px;             /* match your page height or set via JS */
 	border-bottom: darkgray groove 8px;
-
+border-left: darkgrey ridge 2px;
 	border-top: darkgrey solid 2px;
 	border-right: darkgrey solid 2px;
 	  --border-width: 2px;
