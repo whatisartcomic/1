@@ -1274,34 +1274,38 @@ turnMethods = {
         data.pages[current].flip('turnPage',
           (page>current) ? 'l' : 'r');
      else {
-  // We fake a vertical turn by overriding the fold effect directly
   const flip = data.pages[current];
   const flipData = flip.data().f;
+  const vertical = (page > current); // true = down, false = up
 
-  // Force vertical animation: top-down if going forward, bottom-up if going backward
-  const vertical = (page > current) ? true : false;
+  // Backup original transform callback
+  const originalTransform = flipData.opts.transform;
 
-  // Override the internal transform function just for this turn
-  const originalTransform = flipData.wrapper.transform;
+  // Override transform callback
+  flipData.opts.transform = function(point, rotation) {
+    // rotation.x is used for horizontal flip, so we hijack it as if it were y
+    const angle = rotation.x;
+    const dir = vertical ? 1 : -1;
+    const rad = dir * angle * Math.PI / 180;
 
-  flipData.wrapper.transform = function(transformStr, origin) {
-    // replace rotateY(...) with rotateX(...) for vertical effect
-    const rotated = transformStr
-      .replace(/rotateY([^)]+)/, 'rotateX($1)')
-      .replace(/translateX([^)]+)/, 'translateY($1)');
-    return originalTransform.call(this, rotated, origin);
+    const transformStr = `rotateX(${rad}rad) translateZ(0px)`;
+
+    flipData.wrapper.css({
+      transformOrigin: vertical ? '50% 0%' : '50% 100%',
+      transform: transformStr,
+    });
+
+    // Optionally: shadow/folding tweaks can go here
   };
 
-  // Now run the page turn (still says 'br' but transform is hijacked)
-  const fakeCorner = vertical ? 'br' : 'bl';
-  flip.flip('turnPage', fakeCorner);
+  // Trigger normal flip using any allowed corner (e.g., 'br')
+  flip.flip('turnPage', 'br');
 
-  // Restore original transform after one tick
+  // Restore original transform after the animation
   setTimeout(() => {
-    flipData.wrapper.transform = originalTransform;
+    flipData.opts.transform = originalTransform;
   }, 0);
      }
-
   },
 
   // Gets and sets a page
