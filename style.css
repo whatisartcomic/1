@@ -98,7 +98,7 @@ h1,h2,span{
   height: 600px;             /* match your page height or set via JS */
 	border-bottom: darkgray groove 8px;
     border-left: darkgrey ridge 8px;
-	border-top: darkgrey inset 8px;
+	border-top: darkgrey solid 2px;
 	border-right: darkgrey solid 2px;
 }
 
