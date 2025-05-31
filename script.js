@@ -158,6 +158,9 @@ $(document).ready(function() {
             const p = document.getElementById('haikuDisplay');
             p.textContent = '';
             buttonClickCount++;
+
+              document.getElementById('flipbook').style.borderLeft = `2px solid black`;
+
             const thickness = Math.ceil(buttonClickCount / 4);
               document.querySelector('#flipbook::before')?.style?.setProperty?.('--border-width', `${thickness}px`);
 
