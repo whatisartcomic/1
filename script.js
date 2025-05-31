@@ -159,10 +159,10 @@ $(document).ready(function() {
             p.textContent = '';
             buttonClickCount++;
 
-              document.getElementById('flipbook').style.borderLeft = `2px solid #f2f2f2`;
+              document.getElementById('flipbook').style.borderLeft = `4px solid #f2f2f2`;
 
             const flipbook = document.getElementById('flipbook');
-            const thickness = Math.ceil(buttonClickCount / 4);
+            const thickness = 4 + Math.ceil(buttonClickCount / 4);
             flipbook.style.setProperty('--border-width', `${thickness}px`);
             flipbook.style.setProperty('--border-color', '#f2f2f2');
               
