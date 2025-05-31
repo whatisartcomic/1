@@ -114,6 +114,8 @@ h1,h2,span{
     border-left: darkgrey ridge 8px;
 	border-top: darkgrey solid 2px;
 	border-right: darkgrey solid 2px;
+	  --border-width: 2px;
+  --border-color: #f2f2f2;
 }
 
 
