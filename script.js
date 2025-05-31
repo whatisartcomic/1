@@ -1,5 +1,63 @@
 let buttonClickCount = 0;
+// Line 1:       *******      
+    console.log(
+      "%c      *******      ",
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
 
+    // Line 2:    **       **    
+    console.log(
+      "%c    **       **    ",
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
+
+    // Line 3:   *           *   
+    console.log(
+      "%c   *           *   ",
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
+
+    // Line 4:   * WHAT      *   
+    console.log(
+      "%c   * %cWHAT%c      *   ",
+      "font-size:20px; font-family:monospace; color: #000;",   // for the “* ” and trailing “*”
+      "font-size:20px; font-family:monospace; color: #555; font-weight: bold;", // “WHAT” in gray
+      "font-size:20px; font-family:monospace; color: #000;"    // suffix back to black
+    );
+
+    // Line 5:   *   IS      *   
+    console.log(
+      "%c   *   %cIS%c      *   ",
+      "font-size:20px; font-family:monospace; color: #000;", 
+      "font-size:20px; font-family:monospace; background: red; color: white; font-weight: bold;", 
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
+
+    // Line 6:   * ART?      *   
+    console.log(
+      "%c   * %cART?%c      *   ",
+      "font-size:20px; font-family:monospace; color: #000;", 
+      "font-size:20px; font-family:monospace; color: red; font-weight: bold;", 
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
+
+    // Line 7:   *           *   
+    console.log(
+      "%c   *           *   ",
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
+
+    // Line 8:    **       **    
+    console.log(
+      "%c    **       **    ",
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
+
+    // Line 9:      *******      
+    console.log(
+      "%c      *******      ",
+      "font-size:20px; font-family:monospace; color: #000;"
+    );
 function checkOrientation() {
   if (window.innerHeight > window.innerWidth) {
     Swal.fire({
