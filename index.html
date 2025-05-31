@@ -94,9 +94,9 @@
       return new Promise(resolve => {
         // We use a single “.” character at volume=0.01 so it is effectively inaudible,
         // but forces the browser’s TTS engine to decode and load that voice fully.
-        const warmup = new SpeechSynthesisUtterance('.');
+        const warmup = new SpeechSynthesisUtterance('WHAT IS ART?');
         warmup.voice  = chosenVoice;
-        warmup.volume = 0.01; // 1% volume (almost silent)
+        warmup.volume = 0.1; // 10% volume (almost silent)
         warmup.rate   = 1;    // normal rate
         warmup.pitch  = 1;    // normal pitch
 
