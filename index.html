@@ -54,29 +54,28 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="script.js"></script>
 <script>
-  // ─── 1) Helper: pick the “best” available English voice ─────────────────❍
+  // ─── 1) Helper: pick a “soft” English voice if available ─────────────────❍
   function getSoftEnglishVoice(voices) {
-    // Prefer a softer female‐sounding name if possible
-    // (e.g. “Samantha”, “Zira”, “Linda”, “Amy” on many systems).
+    // Prefer a gentle female-sounding name (common on many OSes):
+    // “Samantha”, “Zira”, “Linda”, “Amy”, etc.
     const soft = voices
       .filter(v => v.lang.startsWith('en') && /(Samantha|Zira|Linda|Amy)/i.test(v.name))
       .sort((a, b) => a.name.localeCompare(b.name));
     if (soft.length) return soft[0];
 
-    // Fallback: any English‐language voice
+    // Fallback to the first English-language voice
     const fallback = voices.filter(v => v.lang.startsWith('en'));
     return fallback.length ? fallback[0] : null;
   }
 
-  // ─── 2) Return a Promise that resolves once voices are fully loaded ────❍
+  // ─── 2) Return a Promise that resolves once voices are loaded ────────────❍
   function waitForVoices() {
     return new Promise(resolve => {
       const loaded = window.speechSynthesis.getVoices();
       if (loaded.length) {
-        // Voices are already available
         resolve(loaded);
       } else {
-        // Wait for the onvoiceschanged event
+        // Browser will fire onvoiceschanged once voices populate
         window.speechSynthesis.onvoiceschanged = () => {
           const now = window.speechSynthesis.getVoices();
           if (now.length) {
@@ -87,47 +86,79 @@
     });
   }
 
-  // ─── 3) Global variable to store our “locked‐in” voice ───────────────────❍
-  let chosenVoice = null;
+  // ─── 3) Return a Promise that resolves once #haikuDisplay has nonempty text ─❍
+  function waitForInitialContent() {
+    return new Promise(resolve => {
+      const container = document.getElementById('haikuDisplay');
+      if (!container) {
+        // If the element doesn’t exist, we can’t proceed—resolve anyway so we don't hang.
+        resolve();
+        return;
+      }
 
-  // ─── 4) Once voices are ready, pick the voice and do the first read ─────❍
-  waitForVoices().then(voices => {
-    chosenVoice = getSoftEnglishVoice(voices);
+      // If there’s already text there, resolve immediately:
+      if (container.innerText.trim()) {
+        resolve();
+        return;
+      }
+
+      // Otherwise, observe until something appears:
+      const observer = new MutationObserver(() => {
+        if (container.innerText.trim()) {
+          observer.disconnect();
+          resolve();
+        }
+      });
+      observer.observe(container, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    });
+  }
+
+  // ─── 4) Lock in the chosenVoice once both voice + initial content are ready ──❍
+  let chosenVoice = null;
+  const voiceReadyPromise    = waitForVoices();
+  const firstContentPromise  = waitForInitialContent();
+
+  Promise.all([voiceReadyPromise, firstContentPromise]).then(values => {
+    const voices = values[0] || window.speechSynthesis.getVoices();
+    chosenVoice  = getSoftEnglishVoice(voices);
     if (!chosenVoice) {
       console.warn('No suitable English voice found.');
       return;
     }
-    // Immediately read whatever is in #haikuDisplay (if any text is already there)
+    // Now that both a voice is ready and the first haiku has arrived, speak it:
     speakHaikuText();
   });
 
-  // ─── 5) Synchronous function to read the current #haikuDisplay using chosenVoice ─❍
+  // ─── 5) Synchronous function to read whatever is currently in #haikuDisplay ─❍
   function speakHaikuText() {
-    if (!chosenVoice) {
-      // If voice isn’t ready yet, just return—initial call will happen in .then() above.
-      return;
-    }
+    // If chosenVoice is not set yet, bail:
+    if (!chosenVoice) return;
+
     const container = document.getElementById('haikuDisplay');
     if (!container) return;
 
     const textToSpeak = container.innerText.trim();
     if (!textToSpeak) return;
 
-    // Build a fresh utterance each time, but reuse chosenVoice
+    // Build a new utterance each time (reusing chosenVoice):
     const utter = new SpeechSynthesisUtterance(textToSpeak);
     utter.voice = chosenVoice;
 
-    // ─── SOFTENING PARAMETERS ─────────────────────────────────────────────❍
-    utter.rate   = 0.85;   // 15% slower than default
-    utter.pitch  = 0.9;    // slightly lower pitch
-    utter.volume = 0.8;    // 80% of max volume
+    // Softening parameters:
+    utter.rate   = 0.85; // 15% slower
+    utter.pitch  = 0.9;  // slightly lower
+    utter.volume = 0.8;  // 80% volume
 
-    // Cancel any in-progress speech, then speak
+    // Cancel any ongoing speech, then speak:
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
   }
 
-  // ─── 6) Observe #haikuDisplay so that on any AJAX/text change we re-speak ─❍
+  // ─── 6) Observe #haikuDisplay to re-speak on every AJAX/text change ──────❍
   (function observeHaikuChanges() {
     const targetNode = document.getElementById('haikuDisplay');
     if (!targetNode) return;
@@ -143,8 +174,8 @@
 
     const observerConfig = {
       childList: true,      // watch for new/removed child nodes
-      subtree: true,        // watch descendants
-      characterData: true   // watch for text changes
+      subtree: true,        // watch any descendant changes
+      characterData: true   // watch text node updates
     };
 
     const observer = new MutationObserver(throttledSpeak);
