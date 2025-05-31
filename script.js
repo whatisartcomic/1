@@ -195,7 +195,7 @@ $(document).ready(function() {
 
               const computed = window.getComputedStyle(spine).backgroundColor;
               const rgb = computed.match(/\d+/g).map(Number); // [r, g, b]
-              const newRgb = rgb.map(v => Math.max(v - 10, 0));
+              const newRgb = rgb.map(v => Math.max(v - 2, 0));
               spine.style.backgroundColor = `rgb(${newRgb.join(',')})`;
             }
 
