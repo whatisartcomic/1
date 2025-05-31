@@ -1,4 +1,14 @@
-
+#flipbook::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: black;
+  z-index: 2;
+  pointer-events: none;
+  transition: width 0.3s ease;
+}
 
 /* ——————————————————————
    Enlarge the “Rotate” dialog
