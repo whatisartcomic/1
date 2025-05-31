@@ -159,13 +159,13 @@ $(document).ready(function() {
             p.textContent = '';
             buttonClickCount++;
 
-             
+            
 
             const flipbook = document.getElementById('flipbook');
             const thickness = 4 + Math.ceil(buttonClickCount / 4);
 
-            flipbook.style.setProperty('--border-color', '#f2f2f2');
-            flipbook.style.setProperty('--border-width', `${thickness}px`);
+            const spine = document.getElementById('spine-border');
+            spine.style.width = `${thickness}px`;
   
 
             const total   = $fb.turn('pages');
