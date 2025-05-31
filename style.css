@@ -210,4 +210,7 @@ vertical-align: top;
 }
 
 
+#flipbook .turn-page{
+	background-color:#ccc;
+}
 
