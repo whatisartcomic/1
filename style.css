@@ -1,16 +1,13 @@
-#flipbook::before {
-  content: '';
+#spine-border {
   position: absolute;
+  left: 0;
   top: 0;
-  left: calc(-1 * var(--border-width, 2px)); /* move it outside */
   height: 100%;
-  width: var(--border-width, 2px);
-  background-color: var(--border-color, #f2f2f2);
-  z-index: 10;
-  pointer-events: none;
-  transition: width 0.2s ease;
+  width: 4px; /* default thickness */
+  background-color: #f2f2f2;
+  z-index: 5;
+  transition: width 0.3s ease;
 }
-
 
 /* ——————————————————————
    Enlarge the “Rotate” dialog
