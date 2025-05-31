@@ -90,7 +90,9 @@ h1,h2,span{
 /* 1) Make the flipbook a true clipping container with perspective */
 /* Updated #flipbook definition to clip the page-turn animation */
 #flipbook {
-  position: relative;        /* establish a containing block */
+  background-color: #f2f2f2;
+	
+	position: relative;        /* establish a containing block */
   overflow: hidden;          /* clip child transforms */
   perspective: 2000px;       /* enable 3D transforms inside */
   perspective-origin: 50% 50%;
