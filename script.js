@@ -131,40 +131,7 @@ $(document).ready(function() {
             },
             // Haiku display update
             turned: function(e, page) {
-              const p = document.getElementById('haikuDisplay');
-              if (page === 1) {
-                p.textContent = '';
-              } else {
-                const dataIdx = pagesOrder[page - 2];
-                p.textContent = data[dataIdx];
-                delete p.dataset.fadeWrapped;
-                wrapText(p);
-              }
-            }
-          }
-        });
-
-        // Remove corner elements entirely
-        $fb.find('.corner').remove();
-
-        // Block any click/drag/touch events on the flipbook container
-        const fbEl = $fb.get(0);
-        ['click', 'mousedown', 'mouseup', 'touchstart', 'touchmove', 'touchend'].forEach(evt => {
-          fbEl.addEventListener(evt, e => {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-          }, true);
-        });
-
-        // Only the button can turn pages
-        $('#nextBtn')
-          .off('click')
-          .on('click', () => {
-            const p = document.getElementById('haikuDisplay');
-            p.textContent = '';
-            buttonClickCount++;
-
-            const spine = document.getElementById('spine-border');
+              const spine = document.getElementById('spine-border');
 
             if (buttonClickCount === 1) {
               // —————————————————————————————
@@ -199,6 +166,40 @@ $(document).ready(function() {
               spine.style.backgroundColor = `rgb(${newRgb.join(',')})`;
             }
 
+              const p = document.getElementById('haikuDisplay');
+              if (page === 1) {
+                p.textContent = '';
+              } else {
+                const dataIdx = pagesOrder[page - 2];
+                p.textContent = data[dataIdx];
+                delete p.dataset.fadeWrapped;
+                wrapText(p);
+              }
+            }
+          }
+        });
+
+        // Remove corner elements entirely
+        $fb.find('.corner').remove();
+
+        // Block any click/drag/touch events on the flipbook container
+        const fbEl = $fb.get(0);
+        ['click', 'mousedown', 'mouseup', 'touchstart', 'touchmove', 'touchend'].forEach(evt => {
+          fbEl.addEventListener(evt, e => {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }, true);
+        });
+
+        // Only the button can turn pages
+        $('#nextBtn')
+          .off('click')
+          .on('click', () => {
+            const p = document.getElementById('haikuDisplay');
+            p.textContent = '';
+            buttonClickCount++;
+
+            
             // …then continue with the existing random‐page logic…
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
