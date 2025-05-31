@@ -220,7 +220,7 @@ $(document).ready(function() {
               // —————————————————————————————
               // SUBSEQUENT CLICKS: keep width fixed; just darken more
               // —————————————————————————————
-              spine.style.width = `${spineRightX}px`;
+
               let opac = 0.5 + (0.025 * buttonClickCount);
               spine.style.opacity = `${opac}`;
               // 4) Darken from #f2f2f2 → #e0e0e0
