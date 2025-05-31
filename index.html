@@ -54,28 +54,27 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="script.js"></script>
 <script>
-  // ─── 1) Helper: pick a “soft” English voice if available ─────────────────❍
+  // ─── 1) Helper: pick a soft female-leaning English voice if possible ───────❍
   function getSoftEnglishVoice(voices) {
-    // Prefer a gentle female-sounding name (common on many OSes):
-    // “Samantha”, “Zira”, “Linda”, “Amy”, etc.
+    // Prefer voices named “Samantha”, “Zira”, “Linda”, “Amy” (common on macOS/Windows/Chrome)
     const soft = voices
       .filter(v => v.lang.startsWith('en') && /(Samantha|Zira|Linda|Amy)/i.test(v.name))
       .sort((a, b) => a.name.localeCompare(b.name));
     if (soft.length) return soft[0];
 
-    // Fallback to the first English-language voice
+    // Otherwise fall back to the first English voice found
     const fallback = voices.filter(v => v.lang.startsWith('en'));
     return fallback.length ? fallback[0] : null;
   }
 
-  // ─── 2) Return a Promise that resolves once voices are loaded ────────────❍
+  // ─── 2) Return a Promise that resolves once speechSynthesis.getVoices() is non-empty ─❍
   function waitForVoices() {
     return new Promise(resolve => {
       const loaded = window.speechSynthesis.getVoices();
       if (loaded.length) {
         resolve(loaded);
       } else {
-        // Browser will fire onvoiceschanged once voices populate
+        // onvoiceschanged fires once the browser has populated its voice list
         window.speechSynthesis.onvoiceschanged = () => {
           const now = window.speechSynthesis.getVoices();
           if (now.length) {
@@ -86,23 +85,21 @@
     });
   }
 
-  // ─── 3) Return a Promise that resolves once #haikuDisplay has nonempty text ─❍
+  // ─── 3) Return a Promise that resolves once #haikuDisplay.innerText is non-empty ──❍
   function waitForInitialContent() {
     return new Promise(resolve => {
       const container = document.getElementById('haikuDisplay');
       if (!container) {
-        // If the element doesn’t exist, we can’t proceed—resolve anyway so we don't hang.
+        // If the element doesn’t exist, resolve immediately to avoid hanging
         resolve();
         return;
       }
-
-      // If there’s already text there, resolve immediately:
+      // If it already has text, resolve now
       if (container.innerText.trim()) {
         resolve();
         return;
       }
-
-      // Otherwise, observe until something appears:
+      // Otherwise observe until it gets non-empty
       const observer = new MutationObserver(() => {
         if (container.innerText.trim()) {
           observer.disconnect();
@@ -117,48 +114,78 @@
     });
   }
 
-  // ─── 4) Lock in the chosenVoice once both voice + initial content are ready ──❍
-  let chosenVoice = null;
-  const voiceReadyPromise    = waitForVoices();
-  const firstContentPromise  = waitForInitialContent();
+  // ─── 4) Perform a zero-volume “warm-up” utterance once voices are ready ───────❍
+  function warmUpTtsEngine(chosenVoice) {
+    return new Promise(resolve => {
+      // Create a silent utterance (one period, but zero volume)
+      const warmup = new SpeechSynthesisUtterance('.');
+      warmup.voice = chosenVoice;
+      warmup.volume = 0;      // fully silent
+      warmup.rate   = 1;      // normal rate (doesn’t much matter)
+      warmup.pitch  = 1;      // normal pitch
 
-  Promise.all([voiceReadyPromise, firstContentPromise]).then(values => {
-    const voices = values[0] || window.speechSynthesis.getVoices();
-    chosenVoice  = getSoftEnglishVoice(voices);
+      // Once it’s done, resolve so we know the engine is warmed up
+      warmup.onend = () => {
+        resolve();
+      };
+
+      // Fire it off immediately. It won’t be audible (volume=0),
+      // but it forces the browser to load and decode the voice.
+      window.speechSynthesis.speak(warmup);
+    });
+  }
+
+  // ─── 5) Global variable to hold the locked-in TTS voice ────────────────────❍
+  let chosenVoice = null;
+
+  // ─── 6) Chain together: wait for voices → pick voice → warm up → wait for text → speak ──❍
+  const voicePromise   = waitForVoices();         // voices array ready
+  const contentPromise = waitForInitialContent();  // first haiku text ready
+
+  voicePromise.then(voices => {
+    // 6a) Choose and lock in the voice
+    chosenVoice = getSoftEnglishVoice(voices);
     if (!chosenVoice) {
       console.warn('No suitable English voice found.');
       return;
     }
-    // Now that both a voice is ready and the first haiku has arrived, speak it:
-    speakHaikuText();
+    // 6b) Warm up the engine silently
+    return warmUpTtsEngine(chosenVoice);
+  })
+  .then(() => {
+    // 6c) Once warm-up completes AND after initial content is available, speak it
+    // Wait for contentPromise (it might have already resolved)
+    contentPromise.then(() => {
+      speakHaikuText();
+    });
+  })
+  .catch(err => {
+    console.error('TTS setup error:', err);
   });
 
-  // ─── 5) Synchronous function to read whatever is currently in #haikuDisplay ─❍
+  // ─── 7) Synchronous function to speak whatever is in #haikuDisplay ───────❍
   function speakHaikuText() {
-    // If chosenVoice is not set yet, bail:
-    if (!chosenVoice) return;
-
+    if (!chosenVoice) return; // bail if voice isn’t set
     const container = document.getElementById('haikuDisplay');
     if (!container) return;
 
     const textToSpeak = container.innerText.trim();
     if (!textToSpeak) return;
 
-    // Build a new utterance each time (reusing chosenVoice):
     const utter = new SpeechSynthesisUtterance(textToSpeak);
     utter.voice = chosenVoice;
 
-    // Softening parameters:
-    utter.rate   = 0.85; // 15% slower
-    utter.pitch  = 0.9;  // slightly lower
-    utter.volume = 0.8;  // 80% volume
+    // ───── Softening parameters ──────────────────────────────────────────❍
+    utter.rate   = 0.85;   // 15% slower
+    utter.pitch  = 0.9;    // slightly lower pitch
+    utter.volume = 0.8;    // 80% volume
 
-    // Cancel any ongoing speech, then speak:
+    // Cancel any in-progress speech, then speak the new content
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
   }
 
-  // ─── 6) Observe #haikuDisplay to re-speak on every AJAX/text change ──────❍
+  // ─── 8) Observe #haikuDisplay to re-speak on every AJAX/text change ───────❍
   (function observeHaikuChanges() {
     const targetNode = document.getElementById('haikuDisplay');
     if (!targetNode) return;
@@ -173,15 +200,16 @@
     };
 
     const observerConfig = {
-      childList: true,      // watch for new/removed child nodes
-      subtree: true,        // watch any descendant changes
-      characterData: true   // watch text node updates
+      childList: true,      // new/removed child nodes
+      subtree: true,        // any descendant change
+      characterData: true   // text node updates
     };
 
     const observer = new MutationObserver(throttledSpeak);
     observer.observe(targetNode, observerConfig);
   })();
 </script>
+
 
 
 </body>
