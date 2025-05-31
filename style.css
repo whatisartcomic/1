@@ -97,6 +97,7 @@ h1,h2,span{
 	border-bottom: darkgray groove 8px;
     border-left: darkgrey ridge 8px;
 	border-top: darkgrey inset 8px;
+	border-right: darkgrey solid 2px;
 }
 
 
