@@ -220,7 +220,7 @@ vertical-align: top;
 
 
 #flipbook .turn-page{
-	background-color:#ccc;
+	background-color:#f2f2f2;
 }
 
 
@@ -234,4 +234,5 @@ vertical-align: top;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
+	background-color:#f2f2f2;
 }
