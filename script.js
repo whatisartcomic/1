@@ -162,6 +162,8 @@ $(document).ready(function() {
         $('#nextBtn')
           .off('click')
           .on('click', () => {
+            const p = document.getElementById('haikuDisplay');
+            p.textContent = '';
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
             let rand;
