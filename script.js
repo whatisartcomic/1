@@ -1,7 +1,5 @@
 let buttonClickCount = 0;
 
-
-
 function checkOrientation() {
   if (window.innerHeight > window.innerWidth) {
     Swal.fire({
@@ -55,7 +53,11 @@ $(document).ready(function() {
       pagesOrder.forEach(idx => {
         const imgNum = idx + 1;
         $fb.append(
-          `<div class="page"><div class="comic-frame"><img src="images/webp/${imgNum}.webp" alt="Comic ${imgNum}"></div></div>`
+          `<div class="page">
+             <div class="comic-frame">
+               <img src="images/webp/${imgNum}.webp" alt="Comic ${imgNum}">
+             </div>
+           </div>`
         );
       });
 
@@ -69,8 +71,9 @@ $(document).ready(function() {
 
           if (parent.tagName === 'P') {
             text.split(/(\s+)/).forEach(tok => {
-              if (!tok.trim()) frag.appendChild(document.createTextNode(tok));
-              else {
+              if (!tok.trim()) {
+                frag.appendChild(document.createTextNode(tok));
+              } else {
                 const span = document.createElement('span');
                 span.className = 'fade-in-word';
                 span.textContent = tok;
@@ -81,8 +84,9 @@ $(document).ready(function() {
             });
           } else {
             for (const char of text) {
-              if (char === ' ') frag.appendChild(document.createTextNode(' '));
-              else {
+              if (char === ' ') {
+                frag.appendChild(document.createTextNode(' '));
+              } else {
                 const span = document.createElement('span');
                 span.className = 'fade-in-letter';
                 span.textContent = char;
@@ -106,7 +110,7 @@ $(document).ready(function() {
       // Initialize flipbook when first image loads
       const $firstImg = $fb.find('img').first();
       const initFlipbook = (w, h) => {
-        $('#flipbook').css({ width: w  + 'px', height: h + 'px', visibility: 'visible' });
+        $('#flipbook').css({ width: w + 'px', height: h + 'px', visibility: 'visible' });
 
         // Initialize Turn.js
         $fb.turn({
@@ -118,7 +122,7 @@ $(document).ready(function() {
           acceleration: true,
           elevation:    90,
           duration:     3600,
-          cornerSize:   50,  // create wrappers but will remove interactions
+          cornerSize:   50,
 
           when: {
             // Block any corner drag/tap
@@ -128,8 +132,9 @@ $(document).ready(function() {
             // Haiku display update
             turned: function(e, page) {
               const p = document.getElementById('haikuDisplay');
-              if (page === 1) p.textContent = '';
-              else {
+              if (page === 1) {
+                p.textContent = '';
+              } else {
                 const dataIdx = pagesOrder[page - 2];
                 p.textContent = data[dataIdx];
                 delete p.dataset.fadeWrapped;
@@ -144,7 +149,7 @@ $(document).ready(function() {
 
         // Block any click/drag/touch events on the flipbook container
         const fbEl = $fb.get(0);
-        ['click','mousedown','mouseup','touchstart','touchmove','touchend'].forEach(evt => {
+        ['click', 'mousedown', 'mouseup', 'touchstart', 'touchmove', 'touchend'].forEach(evt => {
           fbEl.addEventListener(evt, e => {
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -159,28 +164,59 @@ $(document).ready(function() {
             p.textContent = '';
             buttonClickCount++;
 
-            
-
-            const flipbook = document.getElementById('flipbook');
-            const thickness = 4 + Math.ceil(buttonClickCount / 4);
-
             const spine = document.getElementById('spine-border');
-            spine.style.width = `${thickness}px`;
-  
 
+            if (buttonClickCount === 1) {
+              // —————————————————————————————
+              // FIRST CLICK: expand to the left edge & darken slightly
+              // —————————————————————————————
+
+              // 1) Get the spine’s bounding rect (to find its right edge)
+              const rect = spine.getBoundingClientRect();
+              const spineRightX = rect.left + rect.width;
+
+              // 2) Switch to fixed positioning so left: 0 is the viewport’s left edge
+              spine.style.position = 'fixed';
+              spine.style.left     = '0';
+              spine.style.top      = '0';
+
+              // (No height override—keeps the 300px from CSS)
+
+              // 3) Set width so that the right edge stays where it was
+              spine.style.width = `${spineRightX}px`;
+
+              // 4) Darken from #f2f2f2 → #e0e0e0
+              spine.style.backgroundColor = '#e0e0e0';
+
+            } else {
+              // —————————————————————————————
+              // SUBSEQUENT CLICKS: keep width fixed; just darken more
+              // —————————————————————————————
+
+              const computed = window.getComputedStyle(spine).backgroundColor;
+              const rgb = computed.match(/\d+/g).map(Number); // [r, g, b]
+              const newRgb = rgb.map(v => Math.max(v - 10, 0));
+              spine.style.backgroundColor = `rgb(${newRgb.join(',')})`;
+            }
+
+            // …then continue with the existing random‐page logic…
             const total   = $fb.turn('pages');
             const current = $fb.turn('page');
             let rand;
-            do { rand = Math.floor(Math.random() * total) + 1; } while (rand === current || rand == 1);
+            do {
+              rand = Math.floor(Math.random() * total) + 1;
+            } while (rand === current || rand === 1);
             $fb.turn('page', rand);
           });
       };
 
-      if ($firstImg[0].complete) initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
-      else $firstImg.on('load', function() { initFlipbook(this.naturalWidth, this.naturalHeight); });
-
+      if ($firstImg[0].complete) {
+        initFlipbook($firstImg[0].naturalWidth, $firstImg[0].naturalHeight);
+      } else {
+        $firstImg.on('load', function() {
+          initFlipbook(this.naturalWidth, this.naturalHeight);
+        });
+      }
     })
     .catch(err => console.error('Failed to load haikus:', err));
 });
-
-
