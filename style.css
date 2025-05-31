@@ -1,14 +1,13 @@
 #spine-border {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 4px; /* default thickness */
-  background-color: #f2f2f2;
-  z-index: 5;
-  transition: width 0.3s ease;
+    position: relative;
+    right: 0;
+    top: 0;
+    height: 300px;
+    width: 4px;
+    background-color: #f2f2f2;
+    z-index: 5;
+    transition: width 0.3s ease;
 }
-
 /* ——————————————————————
    Enlarge the “Rotate” dialog
    —————————————————————— */
