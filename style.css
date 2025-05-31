@@ -1,8 +1,4 @@
-.page {
-  display: flow;
-  align-items: center;
-  
-}
+
 
 /* ——————————————————————
    Enlarge the “Rotate” dialog
@@ -225,3 +221,15 @@ vertical-align: top;
 	background-color:#ccc;
 }
 
+
+.page {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.comic-frame {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
