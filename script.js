@@ -1,4 +1,13 @@
 // script.js
+$('#flipbook').on('turned', function(event, page) {
+  if (page === 1) {
+    // Back on the cover page
+    $(this).css('border-left', 'darkgrey ridge 8px');
+  } else {
+    // Any other page
+    $(this).css('border-left', 'black 2px solid');
+  }
+});
 
 function checkOrientation() {
   if (window.innerHeight > window.innerWidth) {
