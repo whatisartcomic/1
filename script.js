@@ -211,7 +211,7 @@ $(document).ready(function() {
 
               // 3) Set width so that the right edge stays where it was
               spine.style.width = `${spineRightX}px`;
-              let opac = 0.5 + (0.025 * buttonClickCount);
+              let opac = 0.4;
               spine.style.opacity = `${opac}`;
               // 4) Darken from #f2f2f2 → #e0e0e0
               spine.style.backgroundColor = '#e0e0e0';
@@ -220,7 +220,11 @@ $(document).ready(function() {
               // —————————————————————————————
               // SUBSEQUENT CLICKS: keep width fixed; just darken more
               // —————————————————————————————
-
+              spine.style.width = `${spineRightX}px`;
+              let opac = 0.5 + (0.025 * buttonClickCount);
+              spine.style.opacity = `${opac}`;
+              // 4) Darken from #f2f2f2 → #e0e0e0
+              spine.style.backgroundColor = '#e0e0e0';
               const computed = window.getComputedStyle(spine).backgroundColor;
               const rgb = computed.match(/\d+/g).map(Number); // [r, g, b]
               const newRgb = rgb.map(v => Math.max(v - 2, 0));
